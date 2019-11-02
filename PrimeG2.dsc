@@ -32,7 +32,7 @@
   DEFINE DEBUG_PRINT_ERROR_LEVEL = 0x8000004F
 
 [PcdsFixedAtBuild.common]
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x10000000
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0xd900000
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x80000000
   gArmPlatformTokenSpaceGuid.PcdCoreCount|1
 !if $(TARGET) == RELEASE

@@ -76,7 +76,7 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
   INF EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
 
-  INF PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
+  # INF PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   # INF PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
 
   INF ShellPkg/Application/Shell/Shell.inf

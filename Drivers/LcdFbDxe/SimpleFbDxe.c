@@ -220,7 +220,7 @@ SimpleFbDxeInitialize(
   /* SimpleFB runs on a8r8g8b8 (VIDEO_BPP32) for WoA devices */
   UINT32               LineLength = LcdIfFrameBufferWidth * VNBYTES(VIDEO_BPP32);
   UINT32               FrameBufferSize    = LineLength * LcdIfFrameBufferHeight;
-  EFI_PHYSICAL_ADDRESS FrameBufferAddress = LcdIfFrameBufferAddr;
+  EFI_PHYSICAL_ADDRESS FrameBufferAddress = (UINTN) 0x80000000;
 
   mDisplay.Mode->Info->PixelsPerScanLine = LcdIfFrameBufferWidth;
   mDisplay.Mode->Info->PixelFormat = PixelBlueGreenRedReserved8BitPerColor;
