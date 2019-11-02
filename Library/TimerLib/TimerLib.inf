@@ -1,0 +1,45 @@
+## @file
+#
+#  NULL instance of Timer Library as a template.
+#
+#  A non-functional instance of the Timer Library that can be used as a template
+#  for the implementation of a functional timer library instance. This library
+#  instance can also be used to test build DXE, Runtime, DXE SAL, and DXE SMM
+#  modules that require timer services as well as EBC modules that require
+#  timer services.
+#
+#  Copyright (c) 2018 Microsoft Corporation. All rights reserved.
+#  Copyright (c) 2007 - 2008, Intel Corporation.
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001A
+  BASE_NAME                      = iMX6TimerLib
+  FILE_GUID                      = 2956C1A6-6FF8-4763-9FD8-D45892E025E3
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = TimerLib
+
+[Sources.common]
+  TimerLib.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  MdePkg/MdePkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
+
+[LibraryClasses]
+  DebugLib
+  IoLib
+
+[Pcd]
+  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz

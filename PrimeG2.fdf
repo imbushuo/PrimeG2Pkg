@@ -43,7 +43,7 @@ READ_LOCK_STATUS   = TRUE
 
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
   INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
-  INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+  INF PrimeG2Pkg/Drivers/TimerDxe/TimerDxe.inf
 
   INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   INF EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
@@ -53,7 +53,7 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/PrintDxe/PrintDxe.inf
   INF MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
   INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
-  INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  # INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   INF MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
@@ -77,7 +77,7 @@ READ_LOCK_STATUS   = TRUE
   INF EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
 
   INF PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
-  INF PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
+  # INF PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
 
   INF ShellPkg/Application/Shell/Shell.inf
 

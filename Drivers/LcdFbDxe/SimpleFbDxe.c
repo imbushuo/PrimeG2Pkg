@@ -168,14 +168,12 @@ SimpleFbDxeInitialize(
 
   EFI_STATUS Status             = EFI_SUCCESS;
   EFI_HANDLE hUEFIDisplayHandle = NULL;
-  struct mxs_lcdif_regs *pLcdIfRegs = (struct mxs_lcdif_regs *) 
-    (EFI_PHYSICAL_ADDRESS) FixedPcdGet32(PcdLcdIfBaseAddress);
 
   /* Retrieve simple frame buffer from pre-SEC bootloader */
   DEBUG(
       (EFI_D_INFO,
        "SimpleFbDxe: Retrieve LCDIF FrameBuffer parameters from PCD\n"));
-  UINT32 LcdIfFrameBufferAddr   = MmioRead32((UINTN) &pLcdIfRegs->hw_lcdif_cur_buf_reg);
+  UINT32 LcdIfFrameBufferAddr   = 0x80000000;
   UINT32 LcdIfFrameBufferWidth  = FixedPcdGet32(PcdFrameBufferWidth);
   UINT32 LcdIfFrameBufferHeight = FixedPcdGet32(PcdFrameBufferHeight);
 
