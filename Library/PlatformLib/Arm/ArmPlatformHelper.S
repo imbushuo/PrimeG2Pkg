@@ -15,6 +15,9 @@
 #include <Library/ArmLib.h>
 
 ASM_FUNC(ArmPlatformPeiBootAction)
+  mrc   p15, 0, r0, c1, c0, 0
+  bic   r0, r0, #2
+  mcr   p15, 0, r0, c1, c0, 0 
   bx    lr
 
 //UINTN
