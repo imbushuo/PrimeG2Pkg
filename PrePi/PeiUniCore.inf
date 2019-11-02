@@ -29,16 +29,13 @@
   Arm/ModuleEntryPoint.S   | GCC
   Arm/ModuleEntryPoint.asm | RVCT
 
-[Sources.AArch64]
-  AArch64/ArchPrePi.c
-  AArch64/ModuleEntryPoint.S
-
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -102,6 +99,8 @@
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiBootServicesData
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiLoaderCode
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiLoaderData
+
+  gPrimeG2PkgTokenSpaceGuid.PcdLcdIfBaseAddress
 
 [Pcd]
   gArmTokenSpaceGuid.PcdSystemMemoryBase

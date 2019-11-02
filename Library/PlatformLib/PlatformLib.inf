@@ -24,10 +24,12 @@
   MdeModulePkg/MdeModulePkg.dec
   ArmPkg/ArmPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
 
 [LibraryClasses]
   ArmLib
   DebugLib
+  IoLib
 
 [Sources.common]
   ArmPlatformLib.c
@@ -40,6 +42,9 @@
 [FixedPcd]
   gArmTokenSpaceGuid.PcdArmPrimaryCoreMask
   gArmTokenSpaceGuid.PcdArmPrimaryCore
+  gPrimeG2PkgTokenSpaceGuid.PcdLcdIfBaseAddress
+  gPrimeG2PkgTokenSpaceGuid.PcdFrameBufferWidth
+  gPrimeG2PkgTokenSpaceGuid.PcdFrameBufferHeight
 
 [Ppis]
   gArmMpCoreInfoPpiGuid

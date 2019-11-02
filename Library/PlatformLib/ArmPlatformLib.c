@@ -47,15 +47,44 @@ ArmPlatformInitialize (
   return RETURN_SUCCESS;
 }
 
+ARM_CORE_INFO mArmPlatformNullMpCoreInfoTable[] = {
+  {
+    // Cluster 0, Core 0
+    0x0, 0x0,
+
+    // MP Core MailBox Set/Get/Clear Addresses and Clear Value
+    (EFI_PHYSICAL_ADDRESS)0,
+    (EFI_PHYSICAL_ADDRESS)0,
+    (EFI_PHYSICAL_ADDRESS)0,
+    (UINT64)0xFFFFFFFF
+  },
+};
+
 EFI_STATUS
 PrePeiCoreGetMpCoreInfo (
   OUT UINTN                   *CoreCount,
   OUT ARM_CORE_INFO           **ArmCoreTable
   )
 {
-  // This is a unicore platform
-  return EFI_UNSUPPORTED;
+  // This is a unicore platform - but reported as MpCore, why...
+	if (ArmIsMpCore()) {
+    *CoreCount    = sizeof(mArmPlatformNullMpCoreInfoTable) / sizeof(ARM_CORE_INFO);
+    *ArmCoreTable = mArmPlatformNullMpCoreInfoTable;
+    return EFI_SUCCESS;
+  } else {
+    return EFI_UNSUPPORTED;
+  }
 }
+
+ARM_MP_CORE_INFO_PPI mMpCoreInfoPpi = { PrePeiCoreGetMpCoreInfo };
+
+EFI_PEI_PPI_DESCRIPTOR      gPlatformPpiTable[] = {
+  {
+    EFI_PEI_PPI_DESCRIPTOR_PPI,
+    &gArmMpCoreInfoPpiGuid,
+    &mMpCoreInfoPpi
+  }
+};
 
 VOID
 ArmPlatformGetPlatformPpiList (
@@ -63,7 +92,11 @@ ArmPlatformGetPlatformPpiList (
   OUT EFI_PEI_PPI_DESCRIPTOR  **PpiList
   )
 {
-  // This is a unicore platform
-  *PpiListSize = 0;
-  *PpiList = NULL;
+  if (ArmIsMpCore()) {
+    *PpiListSize = sizeof(gPlatformPpiTable);
+    *PpiList = gPlatformPpiTable;
+  } else {
+    *PpiListSize = 0;
+    *PpiList = NULL;
+  }
 }

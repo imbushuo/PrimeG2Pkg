@@ -20,10 +20,13 @@
 #include <Library/PrePiHobListPointerLib.h>
 #include <Library/TimerLib.h>
 #include <Library/PerformanceLib.h>
+#include <Library/IoLib.h>
 
 #include <Ppi/GuidedSectionExtraction.h>
 #include <Ppi/ArmMpCoreInfo.h>
 #include <Ppi/SecPerformance.h>
+
+#include <Device/regs-lcdif.h>
 
 #include "PrePi.h"
 

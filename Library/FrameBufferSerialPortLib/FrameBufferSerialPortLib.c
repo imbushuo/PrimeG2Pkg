@@ -1,6 +1,7 @@
 #include <PiDxe.h>
 
 #include <Library/ArmLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/CacheMaintenanceLib.h>
 #include <Library/HobLib.h>
 #include <Library/SerialPortLib.h>
@@ -52,6 +53,9 @@ SerialPortInitialize(VOID)
   // Interrupt Disable
   InterruptState = ArmGetInterruptState();
   ArmDisableInterrupts();
+
+  // Clear FrameBuffer
+  ZeroMem(gFrameBuffer, gWidth * gHeight * (gBpp / 8));
 
   // Reset console
   FbConReset();
