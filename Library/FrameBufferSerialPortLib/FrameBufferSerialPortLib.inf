@@ -1,0 +1,28 @@
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = FrameBufferSerialPortLib
+  MODULE_TYPE    = BASE
+  VERSION_STRING = 1.0
+  LIBRARY_CLASS  = SerialPortLib
+
+[Sources.common]
+  FrameBufferSerialPortLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
+
+[LibraryClasses]
+  ArmLib
+  PcdLib
+  IoLib
+  HobLib
+  CompilerIntrinsicsLib
+  CacheMaintenanceLib
+
+[Pcd]
+  gPrimeG2PkgTokenSpaceGuid.PcdLcdIfBaseAddress
+  gPrimeG2PkgTokenSpaceGuid.PcdFrameBufferWidth
+  gPrimeG2PkgTokenSpaceGuid.PcdFrameBufferHeight
+  gPrimeG2PkgTokenSpaceGuid.PcdEnableScreenSerial
