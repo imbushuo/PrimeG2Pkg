@@ -84,7 +84,7 @@ ArmPlatformGetVirtualMemoryMap (
   // DRAM
   VirtualMemoryTable[++Index].PhysicalBase = BOOT_IMAGE_PHYSICAL_BASE + BOOT_IMAGE_PHYSICAL_LENGTH;
   VirtualMemoryTable[Index].VirtualBase    = BOOT_IMAGE_PHYSICAL_BASE + BOOT_IMAGE_PHYSICAL_LENGTH;
-  VirtualMemoryTable[Index].Length         = 0xd000000;
+  VirtualMemoryTable[Index].Length         = 0xe600000;
   VirtualMemoryTable[Index].Attributes     = CacheAttributes;
 
   // End of Table
