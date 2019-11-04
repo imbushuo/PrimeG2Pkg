@@ -30,6 +30,7 @@
   ArmLib
   DebugLib
   IoLib
+  TimerLib
 
 [Sources.common]
   ArmPlatformLib.c

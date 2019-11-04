@@ -39,6 +39,15 @@ TimerConstructor (
 
   ASSERT (SOC_OSC_FREQUENCY_REF_HZ >= PcdGet32 (PcdArmArchTimerFreqInHz));
 
+  // Set up this timer
+  MmioWrite32((UINTN) &pGpt->CR, (GPT_CR_SWR_RESET << GPT_CR_SWR_LSH));
+
+  // MicroSecondDelay will break now
+  for (UINTN i = 0; i < 100; i++)
+  {
+    MmioWrite32((UINTN) &pGpt->CR, 0);
+  }
+
   // Calculate the scale factor since we are using the 24Mhz oscillator
   // as reference.
   FreqPreScale = SOC_OSC_FREQUENCY_REF_HZ / PcdGet32 (PcdArmArchTimerFreqInHz);

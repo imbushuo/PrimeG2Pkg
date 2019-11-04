@@ -61,18 +61,15 @@
   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile|{ 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
-  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|5
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|10
 
   gArmTokenSpaceGuid.PcdTrustzoneSupport|FALSE
   gArmTokenSpaceGuid.PcdVFPEnabled|1
 
-  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|1000000
   gEmbeddedTokenSpaceGuid.PcdTimerPeriod|100000
+  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|1000000
 
-  gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|29
-  gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|30
-  gArmTokenSpaceGuid.PcdArmArchTimerVirtIntrNum|26
-  gArmTokenSpaceGuid.PcdArmArchTimerHypIntrNum|27
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"0.1"
 
 [PcdsFeatureFlag.common]
   gArmTokenSpaceGuid.PcdRelocateVectorTable|FALSE
@@ -168,6 +165,10 @@
   PlatformBootManagerLib|PrimeG2Pkg/Library/PlatformBootManagerLib/PlatformBootManagerLib.inf
 
   CompilerIntrinsicsLib|ArmPkg/Library/CompilerIntrinsicsLib/CompilerIntrinsicsLib.inf
+
+  iMX6IoMuxLib|PrimeG2Pkg/Library/iMX6IoMuxLib/iMX6IoMuxLib.inf
+  iMX6UsbPhyLib|PrimeG2Pkg/Library/iMX6UsbPhyLib/iMX6UsbPhyLib.inf
+  iMX6ClkPwrLib|PrimeG2Pkg/Library/iMX6ClkPwrLib/iMX6ClkPwrLib.inf
 
 [LibraryClasses.ARM]
   NULL|ArmPkg/Library/CompilerIntrinsicsLib/CompilerIntrinsicsLib.inf
@@ -282,6 +283,13 @@
   MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 
+  PrimeG2Pkg/Drivers/PciEmulation/PciEmulation.inf
+  MdeModulePkg/Bus/Pci/NonDiscoverablePciDeviceDxe/NonDiscoverablePciDeviceDxe.inf
+  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+
   MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
@@ -290,6 +298,7 @@
 
   PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
+  PrimeG2Pkg/Drivers/LedHeartbeatDxe/LedHeartbeatDxe.inf
 
   ShellPkg/Application/Shell/Shell.inf {
     <LibraryClasses>

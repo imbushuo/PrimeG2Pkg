@@ -51,7 +51,7 @@ ArmPlatformGetVirtualMemoryMap (
     return;
   }
 
-  // SOC registers region 1 (0x00100000 size 0x00C00000)
+  // SOC registers region
   VirtualMemoryTable[Index].PhysicalBase   = SOC_REGISTERS_PHYSICAL_BASE1;
   VirtualMemoryTable[Index].VirtualBase    = SOC_REGISTERS_PHYSICAL_BASE1;
   VirtualMemoryTable[Index].Length         = SOC_REGISTERS_PHYSICAL_LENGTH1;

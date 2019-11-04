@@ -1,0 +1,52 @@
+#
+# Copyright (C) Microsoft. All rights reserved
+#
+#%HEADER%
+/** @file
+  
+ Copyright (c) 2009 Apple, Inc.  All rights reserved.
+
+ This document is the property of Apple, Inc.
+ It is considered confidential and proprietary.
+ 
+ This document may not be reproduced or transmitted in any form,
+ in whole or in part, without the express written permission of
+ Apple, Inc.
+
+**/
+
+[Defines]
+  INF_VERSION                     = 0x00010005
+  BASE_NAME                       = PciEmulation
+  FILE_GUID                       = E87C242E-7341-46d7-B84B-593BC6E4F3E8 
+  MODULE_TYPE                     = DXE_DRIVER
+  VERSION_STRING                  = 1.0
+  ENTRY_POINT                     = PciEmulationEntryPoint
+
+[Sources.common]
+  PciEmulation.c
+
+[Packages]
+  EmbeddedPkg/EmbeddedPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
+
+[LibraryClasses]
+  NonDiscoverableDeviceRegistrationLib
+  UefiDriverEntryPoint
+  iMX6IoMuxLib
+  iMX6UsbPhyLib
+  iMX6ClkPwrLib
+
+[Protocols]
+
+[Pcd]
+  gPrimeG2PkgTokenSpaceGuid.PcdEHCIBase
+  gPrimeG2PkgTokenSpaceGuid.PcdEHCILength
+  gPrimeG2PkgTokenSpaceGuid.PcdIsUsbPortOTG
+  gPrimeG2PkgTokenSpaceGuid.PcdUSBOTGBase
+  giMXPlatformTokenSpaceGuid.PcdGpioBankMemoryRange
+
+[Depex]
+  TRUE

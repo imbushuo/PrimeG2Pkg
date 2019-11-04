@@ -1,0 +1,37 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = LedHeartbeatDxe
+  FILE_GUID                      = 78fe9d61-2f48-4ff3-aec0-3a9fd0e10333
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = HeartbeatInitialize
+
+[Sources.common]
+  Heartbeat.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
+
+[BuildOptions.AARCH64]
+  GCC:*_*_*_CC_FLAGS = -Werror -Wno-error=unused-variable
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  IoLib
+  TimerLib
+  BaseLib
+  DebugLib
+  PrintLib
+  iMX6IoMuxLib
+
+[Protocols]
+  gEfiTimerArchProtocolGuid
+
+[Pcd]
+  giMXPlatformTokenSpaceGuid.PcdGpioBankMemoryRange
+
+[Depex]
+  gEfiTimerArchProtocolGuid

@@ -26,15 +26,16 @@
 #define DDR_ATTRIBUTES_UNCACHED             ARM_MEMORY_REGION_ATTRIBUTE_UNCACHED_UNBUFFERED
 
 // Boot DRAM region (kernel.img & boot working DRAM)
-#define DRAM_MEMORY_BASE                    0x80000000
+#define FRAME_BUFFER_BASE                   0x80000000
+#define FRAME_BUFFER_SIZE                   0x00800000 // 8MB
 
 #define BOOT_IMAGE_PHYSICAL_BASE            0x80800000
-#define BOOT_IMAGE_PHYSICAL_LENGTH          0x00100000 // 1.8MB
+#define BOOT_IMAGE_PHYSICAL_LENGTH          0x001D0000 // 1.8MB
 #define BOOT_IMAGE_ATTRIBUTES               CacheAttributes
 
-// The region of registers from 0x02000000 to 0x021FFFFF
+// The region of registers from 0x02000000 to 0x022FFFFF
 #define SOC_REGISTERS_PHYSICAL_BASE1        0x02000000
-#define SOC_REGISTERS_PHYSICAL_LENGTH1      0x00200000
+#define SOC_REGISTERS_PHYSICAL_LENGTH1      0x00300000
 #define SOC_REGISTERS_ATTRIBUTES            ARM_MEMORY_REGION_ATTRIBUTE_DEVICE
 
 // APBH DMA registers and configuration space (0x01804000 - 0x0180BFFF)
@@ -51,7 +52,7 @@
 
 // Main system DRAM as defined by the PCD definitions of system memory.
 
-// MPPP definitions
+// MPPP definitions 
 #define CPU0_MPPP_PHYSICAL_BASE             0x8080F000
 
 // Interrupt controller
@@ -432,6 +433,9 @@ typedef struct {
 } IMX_WDOG_REGISTERS;
 
 // Clock Control Module (CCM)
+#define IMX6ULL_CCM_CLOCK_OFF    0
+#define IMX6ULL_RUN_ONLY         1
+#define IMX6ULL_RUN_AND_WAIT     3
 #define IMX_CCM_BASE 0x020C4000
 #define IMX_CCM_LENGTH 0x4000
 #define IMX_CCM_ANALOG_BASE  0x020C8000
@@ -558,7 +562,7 @@ typedef union {
   struct {
     // LSB
     UINT32 ssi1_clk_podf : 6;           // 0-5 Divider for ssi1 clock podf
-    UINT32 ssi1_clk_pred : 3;           // 6-8 Divider for ssi1 clock pred
+    UINT32 ssi1_clk_pred : 3;           // 6-8 Divider for ssi1 clock pred 
     UINT32 esai_clk_pred : 3;           // 9-11 Divider for esai clock pred
     UINT32 reserved1 : 4;               // 12-15 Reserved
     UINT32 ssi3_clk_podf : 6;           // 16-21 Divider for ssi3 clock podf
@@ -574,7 +578,7 @@ typedef union {
   struct {
     // LSB
     UINT32 ssi2_clk_podf : 6;           // 0-5 Divider for ssi2 clock podf
-    UINT32 ssi2_clk_pred : 3;           // 6-8 Divider for ssi2 clock pred
+    UINT32 ssi2_clk_pred : 3;           // 6-8 Divider for ssi2 clock pred 
     UINT32 ldb_di0_clk_sel : 3;         // 9-11 Selector for ldb_di0 clock multiplexer
     UINT32 ldb_di1_clk_sel : 3;         // 12-14 Selector for ldb_di1 clock multiplexer
     UINT32 reserved1 : 1;               // 15 Reserved
@@ -830,24 +834,44 @@ typedef union {
 typedef union {
   UINT32 AsUint32;
   struct {
-    // LSB
-    UINT32 ipu1_ipu_clk_enable : 2;     // 0-1 ipu1_ipu clock (ipu1_ipu_clk_enable)
-    UINT32 ipu1_ipu_di0_clk_enable : 2; // 2-3 ipu1_di0 clock and pre-clock (ipu1_ipu_di0_clk_enable)
-    UINT32 ipu1_ipu_di1_clk_enable : 2; // 4-5 ipu1_di1 clock and pre-clock (ipu1_ipu_di1_clk_enable)
-    UINT32 ipu2_ipu_clk_enable : 2;     // 6-7 ipu2_ipu clock (ipu2_ipu_clk_enable)
-    UINT32 ipu2_ipu_di0_clk_enable : 2; // 8-9 ipu2_di0 clock and pre-clock (ipu2_ipu_di0_clk_enable)
-    UINT32 ipu2_ipu_di1_clk_enable : 2; // 10-11 ipu2_di1 clock and pre-clock (ipu2_ipu_di1_clk_enable)
-    UINT32 ldb_di0_clk_enable : 2;      // 12-13 ldb_di0 clock (ldb_di0_clk_enable)
-    UINT32 ldb_di1_clk_enable : 2;      // 14-15 ldb_di1 clock (ldb_di1_clk_enable)
-    UINT32 mipi_core_cfg_clk_enable : 2; // 16-17 mipi_core_cfg clock (mipi_core_cfg_clk_enable)
-    UINT32 mlb_clk_enable : 2;          // 18-19 mlb clock (mlb_clk_enable)
-    UINT32 mmdc_core_aclk_fast_core_p0_enable : 2; // 20-21 mmdc_core_aclk_fast_core_p0 clock (mmdc_core_aclk_fast_core_p0_enable)
-    UINT32 reserved1 : 2;               // 22-23
-    UINT32 mmdc_core_ipg_clk_p0_enable : 2; // 24-25 mmdc_core_ipg_clk_p0 clock (mmdc_core_ipg_clk_p0_enable)
-    UINT32 reserved2 : 2;               // 26-27
-    UINT32 ocram_clk_enable : 2;        // 28-29 ocram clock (ocram_clk_enable)
-    UINT32 openvgaxiclk_clk_root_enable : 2; // 30-31 openvgaxiclk clock (openvgaxiclk_clk_root_enable)
-    // MSB
+    UINT32 esai_clk_enable : 2;                             // 0-1 esai clock
+    UINT32 csi_clk_enable : 2;                              // 2-3 csi clock
+    UINT32 iomuxc_snvs_clk_enable : 2;                      // 4-5 iomuxc snvs clock
+    UINT32 i2c1_serial_clk_enable : 2;                      // 6-7 i2c1 serial clock
+    UINT32 i2c2_serial_clk_enable : 2;                      // 8-9 i2c2 serial clock
+    UINT32 i2c3_serial_clk_enable : 2;                      // 10-11 i2c3 serial clock
+    UINT32 iim_clk_enable : 2;                              // 12-13 iim clock
+    UINT32 iomux_ipt_clk_io_enable : 2;                     // 14-15 iomux ipt clk io clock
+    UINT32 ipmux1_clk_enable : 2;                           // 16-17 ipmux1 clock
+    UINT32 ipmux2_clk_enable : 2;                           // 18-19 ipmux2 clock
+    UINT32 ipmux3_clk_enable : 2;                           // 20-21 ipmux3 clock
+    UINT32 ipsync_ip2apb_tzasc1_ipg_master_clk_enable : 2;  // 22-23 ipsync ip2apb tzasc1 ipg clocks
+    UINT32 reserved3 : 2;                                   // 24-25 
+    UINT32 gpio3_clk_enable : 2;                            // 26-27 gpio3 clock
+    UINT32 lcd_clk_enable : 2;                              // 28-29 lcd clocks
+    UINT32 pxp_clk_enable : 2;                              // 30-31 pxp clocks
+  };
+} IMX_CCM_CCGR2_REG;
+
+typedef union {
+  UINT32 AsUint32;
+  struct {
+    UINT32 reserved1 : 2;                          // 0-1
+    UINT32 uart5_clk_enable : 2;                   // 2-3 uart5 clock
+    UINT32 edpc_clk_enable : 2;                    // 4-5 edpc clock
+    UINT32 uart6_clk_enable : 2;                   // 6-7 uart6 clock
+    UINT32 ccm_dap_clk_enable : 2;                 // 8-9 ccm dap clock
+    UINT32 lcdif1_pix_clk_enable : 2;              // 10-11 lcdif1 pix clock
+    UINT32 gpio4_clk_enable : 2;                   // 12-13 gpio4 clock
+    UINT32 qspi_clk_enable : 2;                    // 14-15 qspi1 clock
+    UINT32 wdog1_clk_enable : 2;                   // 16-17 wdog1 clock
+    UINT32 a7_clkdiv_patch_clk_enable : 2;         // 18-19 a7 clkdiv patch clock
+    UINT32 mmdc_core_aclk_fast_core_p0_enable : 2; // 20-21 mmdc_core_aclk_fast_core_p0 clock
+    UINT32 reserved3 : 2;                          // 22-23
+    UINT32 mmdc_core_ipg_clk_p0_enable : 2;        // 24-25 mmdc_core_ipg_clk_p0 clock
+    UINT32 mmdc_core_ipg_clk_p1_enable : 2;        // 26-27 mmdc_core_ipg_clk_p1 clock
+    UINT32 ocram_clk_enable : 2;                   // 28-29 ocram clock
+    UINT32 iomuxc_snvs_gpr_clk_enable : 2;         // 30-31 iomuxc snvs gpr clock
   };
 } IMX_CCM_CCGR3_REG;
 
@@ -1036,19 +1060,21 @@ typedef union {
   UINT32 AsUint32;
   struct {
     // LSB
-    unsigned  DIV_SELECT : 2;       // 0-1
-    unsigned  Zero1 : 5;            // 2-6
-    unsigned  Reserved1 : 5;        // 7-11
-    unsigned  POWERDOWN : 1;        // 12
-    unsigned  ENABLE : 1;           // 13
-    unsigned  BYPASS_CLK_SRC : 2;   // 14-15
-    unsigned  BYPASS : 1;           // 16
-    unsigned  Reserved2 : 1;        // 17
-    unsigned  PFD_OFFSET_EN : 1;    // 18
-    unsigned  ENABLE_125M : 1;      // 19
-    unsigned  ENABLE_100M : 1;      // 20
-    unsigned  Zero2 : 10;           // 21-30
-    unsigned  LOCK : 1;             // 31
+    unsigned  ENET1_DIV_SELECT : 2;       // 0-1
+    unsigned  ENET2_DIV_SELECT : 2;       // 2-3
+    unsigned  Zero1 : 3;                  // 4-6
+    unsigned  Reserved1 : 5;              // 7-11
+    unsigned  POWERDOWN : 1;              // 12
+    unsigned  ENET1_125M_EN : 1;          // 13
+    unsigned  BYPASS_CLK_SRC : 2;         // 14-15
+    unsigned  BYPASS : 1;                 // 16
+    unsigned  Reserved2 : 1;              // 17
+    unsigned  PFD_OFFSET_EN : 1;          // 18
+    unsigned  ENABLE_125M : 1;            // 19
+    unsigned  ENET2_125M_EN : 1;          // 20
+    unsigned  ENET_25M_REF_EN : 1;        // 21
+    unsigned  Zero2 : 9;                  // 22-30
+    unsigned  LOCK : 1;                   // 31
     // MSB
   };
 } IMX_CCM_ANALOG_PLL_ENET_REG;
@@ -1279,7 +1305,7 @@ typedef struct {
   UINT32 MIBC;          // 64h
   UINT32 reserved5[7];  //
   UINT32 RCR;           // 84h
-  UINT32 reserved6[15]; //
+  UINT32 reserved6[15]; // 
   UINT32 TCR;           // C4h
   UINT32 reserved7[7];
   UINT32 PALR;          // E4h
@@ -1305,19 +1331,19 @@ typedef union {
     // LSB
     UINT32 RS : 1;          // 0 Run/Stop (RS) . Read/Write. Default 0b. 1=Run. 0=Stop.
     UINT32 RST : 1;         // 1 Controller Reset (RESET) - Read/Write.
-    UINT32 FS_1 : 2;        // 2-3 Frame List Size (Read/Write or Read Only). Default 000b.
+    UINT32 FS_1 : 2;        // 2-3 Frame List Size (Read/Write or Read Only). Default 000b. 
     UINT32 PSE : 1;         // 4 Periodic Schedule Enable- Read/Write. Default 0b.
-    UINT32 ASE : 1;         // 5 Asynchronous Schedule Enable Read/Write. Default 0b.
-    UINT32 IAA : 1;         // 6 Interrupt on Async Advance Doorbell Read/Write.
-    UINT32 reserved1 : 1;   // 7
-    UINT32 ASP : 2;         // 8-9 Asynchronous Schedule Park Mode Count (OPTIONAL) . Read/Write.
+    UINT32 ASE : 1;         // 5 Asynchronous Schedule Enable Read/Write. Default 0b. 
+    UINT32 IAA : 1;         // 6 Interrupt on Async Advance Doorbell Read/Write. 
+    UINT32 reserved1 : 1;   // 7 
+    UINT32 ASP : 2;         // 8-9 Asynchronous Schedule Park Mode Count (OPTIONAL) . Read/Write. 
     UINT32 reserved2 : 1;   // 10 Reserved. These bits are reserved and should be set to zero.
     UINT32 ASPE : 1;        // 11 Asynchronous Schedule Park Mode Enable (OPTIONAL) . Read/Write.
     UINT32 ATDTW : 1;       // 12 Add dTD TripWire ¨C Read/Write. [device mode only]
-    UINT32 SUTW : 1;        // 13 Setup TripWire ¨C Read/Write. [device mode only]
-    UINT32 reserved3 : 1;   // 14
+    UINT32 SUTW : 1;        // 13 Setup TripWire ¨C Read/Write. [device mode only] 
+    UINT32 reserved3 : 1;   // 14 
     UINT32 FS2 : 1;         // 15 Frame List Size - (Read/Write or Read Only). [host mode only]
-    UINT32 ITC : 8;         // 16-23 Interrupt Threshold Control Read/Write. Default 08h.
+    UINT32 ITC : 8;         // 16-23 Interrupt Threshold Control Read/Write. Default 08h. 
     UINT32 reserved : 8;    // 24-31 Reserved. These bits are reserved and should be set to zero.
     // LSB
   };
@@ -1350,7 +1376,7 @@ typedef union {
   UINT32 AsUint32;
   struct {
     // LSB
-    UINT32 reserved1 : 7;       // 0-6
+    UINT32 reserved1 : 7;       // 0-6 
     UINT32 OVER_CUR_DIS : 1;    // 7 Disable Overcurrent Detection
     UINT32 OVER_CUR_POL : 1;    // 8 Polarity of Overcurrent (1-active low, 0-active high)
     UINT32 PWR_POL : 1;         // 9 Power Polarity (1-active high, 0-active low)
@@ -1421,7 +1447,7 @@ typedef union {
     UINT32 FSDLL_RST_EN : 1;            // 24 Enables the feature to reset the FSDLL lock detection logic at the end of each TX packet.
     UINT32 ENAUTOCLR_USBCLKGATE : 1;    // 25
     UINT32 ENAUTOSET_USBCLKS : 1;       // 26
-    UINT32 OTG_ID_VALUE : 1;            // 27
+    UINT32 OTG_ID_VALUE : 1;            // 27 
     UINT32 HOST_FORCE_LS_SE0 : 1;       // 28 Forces the next FS packet that is transmitted to have a EOP with LS timing.
     UINT32 UTMI_SUSPENDM : 1;           // 29 Used by the PHY to indicate a powered-down state.
     UINT32 CLKGATE : 1;                 // 30 Gate UTMI Clocks. Clear to 0 to run clocks.
@@ -1488,7 +1514,7 @@ typedef union {
   struct {
     // LSB
     UINT32 reserved1 : 18;  // 0-17
-    UINT32 CHK_CONTACT : 1; // 18
+    UINT32 CHK_CONTACT : 1; // 18 
     UINT32 CHK_CHRG_B : 1;  // 19
     UINT32 EN_B : 1;        // 20
     UINT32 reserved2 : 11;  // 21-31

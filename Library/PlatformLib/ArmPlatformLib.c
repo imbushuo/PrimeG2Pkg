@@ -14,6 +14,8 @@
 
 #include <Library/ArmLib.h>
 #include <Library/ArmPlatformLib.h>
+#include <Library/TimerLib.h>
+#include <Library/iMX6Timer.h>
 
 #include <Ppi/ArmMpCoreInfo.h>
 
@@ -43,6 +45,9 @@ ArmPlatformInitialize (
   IN  UINTN                     MpId
   )
 {
+  // Initialize the required timer
+  TimerConstructor();
+
   // This is a unicore platform
   return RETURN_SUCCESS;
 }
