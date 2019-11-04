@@ -85,9 +85,12 @@
   gEmbeddedTokenSpaceGuid.PcdPrePiProduceMemoryTypeInformationHob|TRUE
 
 [PcdsPatchableInModule]
-  # Console Resolution (this is fake)
+  # Console Resolution
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|320
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|240
+  # I wish the screen will be larger in Prime G3
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|40
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|12
 
 [LibraryClasses.common]
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
@@ -265,8 +268,8 @@
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   MdeModulePkg/Universal/PrintDxe/PrintDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
-  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  PrimeG2Pkg/Drivers/ConSplitterDxe/ConSplitterDxe.inf
+  PrimeG2Pkg/Drivers/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
