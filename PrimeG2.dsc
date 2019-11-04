@@ -30,6 +30,7 @@
   # -D FLAG=VALUE
   #
   DEFINE DEBUG_PRINT_ERROR_LEVEL = 0x8000004F
+  DEFINE USE_SCREEN_FOR_SERIAL_OUTPUT = 0
 
 [PcdsFixedAtBuild.common]
   gArmTokenSpaceGuid.PcdSystemMemorySize|0xef00000
@@ -70,6 +71,9 @@
   gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|1000000
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"0.1"
+
+  giMXPlatformTokenSpaceGuid.PcdSerialRegisterBase|0x02020000   # UART1
+  giMXPlatformTokenSpaceGuid.PcdKdUartInstance|1                # UART1
 
 [PcdsFeatureFlag.common]
   gArmTokenSpaceGuid.PcdRelocateVectorTable|FALSE
@@ -153,7 +157,11 @@
   SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
 
   DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
+!if $(USE_SCREEN_FOR_SERIAL_OUTPUT) == 1
   SerialPortLib|PrimeG2Pkg/Library/FrameBufferSerialPortLib/FrameBufferSerialPortLib.inf
+!else
+  SerialPortLib|PrimeG2Pkg/Library/UartSerialPortLib/UartSerialPortLib.inf
+!endif
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
 
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf

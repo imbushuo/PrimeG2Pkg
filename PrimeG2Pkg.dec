@@ -23,6 +23,11 @@
   # PcdGpioBankMemoryRange - The memory range for 1 GPIO bank register (default 16KB)
   giMXPlatformTokenSpaceGuid.PcdGpioBankMemoryRange|16384|UINT32|0x15
 
+  # PcdSerialRegisterBase   - Define a base address of UEFI console UART
+  # PcdKdUartInstance - UART instance that should be used for Windows
+  giMXPlatformTokenSpaceGuid.PcdKdUartInstance|1|UINT32|0x11
+  giMXPlatformTokenSpaceGuid.PcdSerialRegisterBase|0x00000000|UINT32|0x12
+
   # USB EHCI Controller
   gPrimeG2PkgTokenSpaceGuid.PcdEHCIBase|0x02184000|UINT32|0xE
   gPrimeG2PkgTokenSpaceGuid.PcdEHCILength|0x4000|UINT32|0xF

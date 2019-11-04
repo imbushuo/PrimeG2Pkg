@@ -1,0 +1,41 @@
+## @file
+#
+#  Copyright (c) 2018 Microsoft Corporation. All rights reserved.
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001A
+  BASE_NAME                      = SerialPortLib
+  FILE_GUID                      = C22D85E6-8B3E-4c05-AA5B-5732F3ACD055
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SerialPortLib
+
+[Sources.common]
+  UartSerialPortLib.c
+
+[LibraryClasses]
+  ArmLib
+  BaseMemoryLib
+  CacheMaintenanceLib
+  IoLib
+  PcdLib
+  TimerLib
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
+
+[FixedPcd]
+  giMXPlatformTokenSpaceGuid.PcdSerialRegisterBase
