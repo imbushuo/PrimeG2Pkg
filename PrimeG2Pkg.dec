@@ -34,5 +34,12 @@
   gPrimeG2PkgTokenSpaceGuid.PcdIsUsbPortOTG|TRUE|BOOLEAN|0x10
   gPrimeG2PkgTokenSpaceGuid.PcdUSBOTGBase|0x02184000|UINT32|0x11
 
+  # Keypad Interrupt
+  giMXPlatformTokenSpaceGuid.PcdKeypadDeviceIrq|114|UINT32|0xd0000100
+
+  # SMBIOS
+  giMXPlatformTokenSpaceGuid.PcdSystemUuid|{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}|VOID*|0x3D
+  giMXPlatformTokenSpaceGuid.PcdPhysicalMemoryMaximumCapacity|0x0|UINT32|0x4B
+
 [PcdsFeatureFlag.common]
   gPrimeG2PkgTokenSpaceGuid.PcdLvdsEnable|FALSE|BOOLEAN|0x00001001

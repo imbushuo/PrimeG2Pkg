@@ -1,0 +1,137 @@
+/** @file
+*
+*  Copyright (c) 2018 Microsoft Corporation. All rights reserved.
+*
+*  This program and the accompanying materials
+*  are licensed and made available under the terms and conditions of the BSD License
+*  which accompanies this distribution.  The full text of the license may be found at
+*  http://opensource.org/licenses/bsd-license.php
+*
+*  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+*
+**/
+
+#include "Platform.h"
+#include <Device/imx6_ull.h>
+
+// DBG2 Definitions
+#pragma pack (1)
+
+typedef enum {
+  DBG2_TYPE_SERIAL = 0x8000,
+  DBG2_TYPE_1394,
+  DBG2_TYPE_USB,
+  DBG2_TYPE_NET
+} DBG2_PORT_TYPE;
+
+#define EFI_ACPI_DEBUG_PORT_2_TABLE_REVISION 0x00000000
+#define UART_NAME_SPACE_STRING_LENGTH               sizeof("\\_SB.UAR1")
+#define UART_IMX6_UART_ADDRESS_SIZE       0x000000BC
+
+#if FixedPcdGet32(PcdKdUartInstance) == 1
+#define KD_UART_BASE_ADDR CSP_BASE_REG_PA_UART1
+#define KD_UART_ACPI_PATH "\\_SB.UAR1"
+#elif FixedPcdGet32(PcdKdUartInstance) == 2
+#define KD_UART_BASE_ADDR CSP_BASE_REG_PA_UART2
+#define KD_UART_ACPI_PATH "\\_SB.UAR2"
+#elif FixedPcdGet32(PcdKdUartInstance) == 3
+#define KD_UART_BASE_ADDR CSP_BASE_REG_PA_UART3
+#define KD_UART_ACPI_PATH "\\_SB.UAR3"
+#elif FixedPcdGet32(PcdKdUartInstance) == 4
+#define KD_UART_BASE_ADDR CSP_BASE_REG_PA_UART4
+#define KD_UART_ACPI_PATH "\\_SB.UAR4"
+#elif FixedPcdGet32(PcdKdUartInstance) == 5
+#define KD_UART_BASE_ADDR CSP_BASE_REG_PA_UART5
+#define KD_UART_ACPI_PATH "\\_SB.UAR5"
+#else
+#error "Invalid PcdKdUartInstance. Must be 1, 2, 3, 4, or 5"
+#endif
+
+// ACPI 5.0 DBG2 structure
+typedef struct {
+  EFI_ACPI_DESCRIPTION_HEADER   Header;
+  UINT32                        OffsetDbgDeviceInfo;
+  UINT32                        NumberDbgdeviceInfo;
+} EFI_ACPI_5_0_DEBUG_PORT_2_TABLE_HEADER;
+
+typedef struct {
+  UINT8 Revision;
+  UINT16 Length;
+  UINT8 NumberofGenericAddressRegisters;
+  UINT16 NameSpaceStringLength;
+  UINT16 NameSpaceStringOffset;
+  UINT16 OemDataLength;
+  UINT16 OemDataOffset;
+  UINT16 PortType;
+  UINT16 PortSubtype;
+  UINT16 Reserved;
+  UINT16 BaseAddressRegisterOffset;
+  UINT16 AddressSizeOffset;
+} DEBUG_DEVICE_INFO;
+
+typedef struct {
+  DEBUG_DEVICE_INFO DeviceInfo;
+  EFI_ACPI_5_0_GENERIC_ADDRESS_STRUCTURE BaseAddressRegister;
+  UINT32 AddressSize;
+  char NameSpaceString[UART_NAME_SPACE_STRING_LENGTH];
+} DEBUG_DEVICE_INFO_UART;
+
+typedef struct {
+  EFI_ACPI_5_0_DEBUG_PORT_2_TABLE_HEADER Header;
+  DEBUG_DEVICE_INFO_UART Uart;
+} EFI_ACPI_5_0_DEBUG_PORT_2_TABLE;
+
+#pragma pack ()
+
+// Debug Port 2 table
+STATIC EFI_ACPI_5_0_DEBUG_PORT_2_TABLE Dbg2 = {
+  {
+    // Header
+    {
+      EFI_ACPI_5_0_DEBUG_PORT_2_TABLE_SIGNATURE,     // Signature "DBG2"
+      sizeof (EFI_ACPI_5_0_DEBUG_PORT_2_TABLE),      // Length
+      EFI_ACPI_DEBUG_PORT_2_TABLE_REVISION,          // Revision
+      EFI_ACPI_5_0_UNDEFINED,                        // Checksum - updated at runtime
+      EFI_ACPI_OEM_ID,                               // OEM ID[6]
+      EFI_ACPI_OEM_TABLE_ID,                         // OEM Table ID
+      EFI_ACPI_OEM_REVISION,                         // OEM Revision
+      EFI_ACPI_CREATOR_ID,                           // Creator ID
+      EFI_ACPI_CREATOR_REVISION                      // Creator Revision
+    },
+    sizeof (EFI_ACPI_5_0_DEBUG_PORT_2_TABLE_HEADER), // OffsetDbgDeviceinfo
+    1,                                               // NumberDbgDeviceInfo
+  },
+  {
+    // Uart
+    {
+      // DeviceInfo
+      EFI_ACPI_RESERVED_BYTE,                                 // Revision
+      sizeof (DEBUG_DEVICE_INFO_UART),                        // Length
+      1,                                                      // NumberofGenericAddressRegisters
+      UART_NAME_SPACE_STRING_LENGTH,                          // NameSpaceStringLength
+      OFFSET_OF (DEBUG_DEVICE_INFO_UART, NameSpaceString),    // NameSpaceStringOffset
+      0,                                                      // OemDataLength
+      EFI_ACPI_RESERVED_WORD,                                 // OemDataOffset
+      DBG2_TYPE_SERIAL,                                       // PortType
+      DBG_PORT_SUBTYPE_IMX6,                                  // PortSubtype 000Ch
+      EFI_ACPI_RESERVED_WORD,                                 // Reserved
+      OFFSET_OF (DEBUG_DEVICE_INFO_UART, BaseAddressRegister), // BaseAddressRegisterOffset
+      OFFSET_OF (DEBUG_DEVICE_INFO_UART, AddressSize),        // AddressSizeOffset
+    },
+    {
+      // BaseAddressRegister
+      EFI_ACPI_5_0_SYSTEM_MEMORY,                             // AddressSpaceId
+      0x20,                                                   // RegisterBitWidth = 32
+      0,                                                      // RegisterBitOffset = 0
+      0x20,                                                   // AccessSize = 32
+      KD_UART_BASE_ADDR,                                      // Address
+    },
+    UART_IMX6_UART_ADDRESS_SIZE,                                // AddressSize
+    KD_UART_ACPI_PATH,                                          // NameSpaceString
+  },
+};
+
+// Reference the table being generated to prevent the optimizer from removing the
+// data structure from the executable
+VOID* CONST ReferenceAcpiTable = &Dbg2;
