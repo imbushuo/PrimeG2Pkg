@@ -168,12 +168,12 @@ SimpleFbDxeInitialize(
 
   EFI_STATUS Status             = EFI_SUCCESS;
   EFI_HANDLE hUEFIDisplayHandle = NULL;
+  struct mxs_lcdif_regs *pLcdIfRegs = (struct mxs_lcdif_regs *) 
+    (EFI_PHYSICAL_ADDRESS) FixedPcdGet32(PcdLcdIfBaseAddress);
 
   /* Retrieve simple frame buffer from pre-SEC bootloader */
-  DEBUG(
-      (EFI_D_INFO,
-       "SimpleFbDxe: Retrieve LCDIF FrameBuffer parameters from PCD\n"));
-  UINT32 LcdIfFrameBufferAddr   = 0x80000000;
+  DEBUG((EFI_D_INFO, "LcdFbDxe: Retrieve LCDIF FrameBuffer parameters from PCD\n"));
+  UINT32 LcdIfFrameBufferAddr   = (UINT32) MmioRead32((UINTN) &pLcdIfRegs->hw_lcdif_cur_buf_reg);
   UINT32 LcdIfFrameBufferWidth  = FixedPcdGet32(PcdFrameBufferWidth);
   UINT32 LcdIfFrameBufferHeight = FixedPcdGet32(PcdFrameBufferHeight);
 
@@ -220,7 +220,7 @@ SimpleFbDxeInitialize(
   /* SimpleFB runs on a8r8g8b8 (VIDEO_BPP32) for WoA devices */
   UINT32               LineLength = LcdIfFrameBufferWidth * VNBYTES(VIDEO_BPP32);
   UINT32               FrameBufferSize    = LineLength * LcdIfFrameBufferHeight;
-  EFI_PHYSICAL_ADDRESS FrameBufferAddress = (UINTN) 0x80000000;
+  EFI_PHYSICAL_ADDRESS FrameBufferAddress = (UINTN) LcdIfFrameBufferAddr;
 
   mDisplay.Mode->Info->PixelsPerScanLine = LcdIfFrameBufferWidth;
   mDisplay.Mode->Info->PixelFormat = PixelBlueGreenRedReserved8BitPerColor;
