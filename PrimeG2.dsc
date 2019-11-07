@@ -289,6 +289,7 @@
   MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
   MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
   MdeModulePkg/Application/UiApp/UiApp.inf
+  MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
 
   MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
@@ -296,6 +297,7 @@
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   FatPkg/EnhancedFatDxe/Fat.inf
   MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
@@ -317,6 +319,7 @@
   PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
   PrimeG2Pkg/Drivers/LedHeartbeatDxe/LedHeartbeatDxe.inf
+  PrimeG2Pkg/Drivers/GpioKeypadDxe/GpioKeypadDxe.inf
 
   ShellPkg/Application/Shell/Shell.inf {
     <LibraryClasses>

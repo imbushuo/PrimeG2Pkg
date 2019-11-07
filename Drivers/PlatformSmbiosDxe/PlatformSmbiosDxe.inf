@@ -51,6 +51,8 @@
 [FixedPcd]
   gArmPlatformTokenSpaceGuid.PcdCoreCount
   gArmTokenSpaceGuid.PcdFdSize
+  gArmTokenSpaceGuid.PcdSystemMemorySize
+  gArmTokenSpaceGuid.PcdSystemMemoryBase
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor
   giMXPlatformTokenSpaceGuid.PcdSystemUuid

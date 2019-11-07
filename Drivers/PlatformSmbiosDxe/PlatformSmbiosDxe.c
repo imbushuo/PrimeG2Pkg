@@ -1409,7 +1409,7 @@ PhysicalMemoryArrayInfoUpdateSmbiosType16 (
   mPhysicalMemoryArrayInfoType16.MaximumCapacity = MaximumCapacity;
 
   // 0Fh - Extended Maximum Capacity
-  mPhysicalMemoryArrayInfoType16.ExtendedMaximumCapacity = 0;
+  mPhysicalMemoryArrayInfoType16.ExtendedMaximumCapacity = MaximumCapacity;
 
   // Since there are no strings, need to add one extra to the record length
   // in order to have the record end with double NULL.
@@ -1543,7 +1543,7 @@ MemoryArrayMappingInfoUpdateSmbiosType19 (
   SmbiosRecordLen = sizeof (SMBIOS_TABLE_TYPE19);
 
   // 04h - Starting Address
-  StartAddress = 0x80000000;
+  StartAddress = FixedPcdGet32(PcdSystemMemoryBase) / 1024;
   if (StartAddress == 0) {
     DEBUG ((DEBUG_ERROR, "%a: PcdMemoryStartAddress not filled\n", __FUNCTION__));
     Status = EFI_INVALID_PARAMETER;
@@ -1553,7 +1553,7 @@ MemoryArrayMappingInfoUpdateSmbiosType19 (
   mMemoryArrayMappedInfoType19.ExtendedStartingAddress = 0;
 
   // 08h - Ending Address
-  EndAddress = 0x9FFF0000;
+  EndAddress = (FixedPcdGet32(PcdSystemMemorySize) + FixedPcdGet32(PcdSystemMemoryBase) - 1) / 1024;
   if (EndAddress == 0) {
     DEBUG ((DEBUG_ERROR, "%a: PcdMemoryEndAddress not filled\n", __FUNCTION__));
     Status = EFI_INVALID_PARAMETER;

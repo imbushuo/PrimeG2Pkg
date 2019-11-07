@@ -63,6 +63,7 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
   INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
   INF MdeModulePkg/Application/UiApp/UiApp.inf
+  INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
 
   INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   INF MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
@@ -77,6 +78,7 @@ READ_LOCK_STATUS   = TRUE
 
   INF MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   INF MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  INF MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe.inf
   INF MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   INF FatPkg/EnhancedFatDxe/Fat.inf
   INF MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
@@ -91,6 +93,7 @@ READ_LOCK_STATUS   = TRUE
   INF PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   INF PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
   INF PrimeG2Pkg/Drivers/LedHeartbeatDxe/LedHeartbeatDxe.inf
+  INF PrimeG2Pkg/Drivers/GpioKeypadDxe/GpioKeypadDxe.inf
 
   INF ShellPkg/Application/Shell/Shell.inf
 
