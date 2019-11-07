@@ -69,10 +69,16 @@ ArmPlatformGetVirtualMemoryMap (
   VirtualMemoryTable[Index].Length         = GIC_REGISTERS_PHYSICAL_LENGTH;
   VirtualMemoryTable[Index].Attributes     = SOC_REGISTERS_ATTRIBUTES;
 
-  // Framebuffer
+  // Free memory
   VirtualMemoryTable[++Index].PhysicalBase = 0x80000000;
   VirtualMemoryTable[Index].VirtualBase    = 0x80000000;
-  VirtualMemoryTable[Index].Length         = 0x800000;
+  VirtualMemoryTable[Index].Length         = 0x700000;
+  VirtualMemoryTable[Index].Attributes     = DDR_ATTRIBUTES_UNCACHED;
+
+  // Framebuffer
+  VirtualMemoryTable[++Index].PhysicalBase = 0x80600000;
+  VirtualMemoryTable[Index].VirtualBase    = 0x80600000;
+  VirtualMemoryTable[Index].Length         = 0x200000;
   VirtualMemoryTable[Index].Attributes     = DDR_ATTRIBUTES_UNCACHED;
 
   // FD region

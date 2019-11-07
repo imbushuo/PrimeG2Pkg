@@ -133,11 +133,24 @@ MemoryPeim (
   // GIC-400 registers region
   AddAndMmio(&MemoryTable[2]);
 
+  // Free memory
+  BuildResourceDescriptorHob (
+                              EFI_RESOURCE_SYSTEM_MEMORY,
+                              EFI_RESOURCE_ATTRIBUTE_PRESENT |
+                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                              EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
+                              EFI_RESOURCE_ATTRIBUTE_TESTED,
+                              MemoryTable[3].PhysicalBase,
+                              MemoryTable[3].Length
+                              );
+
   // Framebuffer
-  Add(&MemoryTable[3], EfiMaxMemoryType);
+  Add(&MemoryTable[4], EfiMaxMemoryType);
 
   // FD region
-  Add(&MemoryTable[4], EfiBootServicesData);
+  Add(&MemoryTable[5], EfiBootServicesData);
 
   // Usable memory.
   BuildResourceDescriptorHob (
@@ -148,8 +161,8 @@ MemoryPeim (
                               EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
                               EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
                               EFI_RESOURCE_ATTRIBUTE_TESTED,
-                              MemoryTable[5].PhysicalBase,
-                              MemoryTable[5].Length
+                              MemoryTable[6].PhysicalBase,
+                              MemoryTable[6].Length
                               );
 
   // Build Memory Allocation Hob
