@@ -72,7 +72,7 @@ ArmPlatformGetVirtualMemoryMap (
   // Free memory
   VirtualMemoryTable[++Index].PhysicalBase = 0x80000000;
   VirtualMemoryTable[Index].VirtualBase    = 0x80000000;
-  VirtualMemoryTable[Index].Length         = 0x700000;
+  VirtualMemoryTable[Index].Length         = 0x600000;
   VirtualMemoryTable[Index].Attributes     = DDR_ATTRIBUTES_UNCACHED;
 
   // Framebuffer
