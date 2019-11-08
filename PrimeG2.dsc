@@ -62,7 +62,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile|{ 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
-  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|10
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|5
 
   gArmTokenSpaceGuid.PcdTrustzoneSupport|FALSE
   gArmTokenSpaceGuid.PcdVFPEnabled|1
@@ -122,7 +122,7 @@
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
   ArmPlatformStackLib|ArmPlatformPkg/Library/ArmPlatformStackLib/ArmPlatformStackLib.inf
-  EfiResetSystemLib|ArmPkg/Library/ArmPsciResetSystemLib/ArmPsciResetSystemLib.inf
+  EfiResetSystemLib|PrimeG2Pkg/Library/iMX6ULLResetSystemLib/iMX6ULLResetSystemLib.inf
 
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf

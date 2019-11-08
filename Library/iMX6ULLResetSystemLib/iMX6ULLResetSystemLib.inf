@@ -1,0 +1,44 @@
+#/** @file
+# Reset System lib using iMX6 registers
+#
+# Copyright (c) 2008, Apple Inc. All rights reserved.<BR>
+# Copyright (c) 2014, Linaro Ltd. All rights reserved.<BR>
+# Copyright (c) 2014, ARM Ltd. All rights reserved.<BR>
+# Copyright (c) 2019, Bingxing Wang. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = iMX6ULLResetSystemLib
+  FILE_GUID                      = b764ad02-18db-4c86-802f-5a3f14c124cf
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = EfiResetSystemLib
+
+[Sources]
+  iMX6ULLResetSystemLib.c
+
+[Packages]
+  ArmPkg/ArmPkg.dec
+  MdePkg/MdePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  PrimeG2Pkg/PrimeG2Pkg.dec
+
+[Guids]
+  gEfiEventVirtualAddressChangeGuid
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  IoLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib

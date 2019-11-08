@@ -116,6 +116,10 @@
 #define IMX_SNVS_IP_ID 0x3E
 #define IMX_SNVS_IRQ 51         // SNVS consolidated interrupt
 
+// Watchdog control
+#define IMX_WDOG1_WCR 0x020bc000
+#define IMX_WDOG2_WCR 0x020c0000
+
 // IOMUXC Registers
 #define IOMUXC_SW_MUX_CTL_PAD_KEY_COL0      0x020E01F8
 #define IOMUXC_SW_MUX_CTL_PAD_KEY_ROW0      0x020E01FC
