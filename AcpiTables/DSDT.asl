@@ -19,5 +19,9 @@ DefinitionBlock ("DSDT.aml", "DSDT", 5, "MSFT", "EDK2", 1)
   Scope (\_SB_)
   {
     include("Dsdt-Platform.asl")
+    include("Dsdt-Gpio.asl")
+    include("Dsdt-I2c.asl")
+    include("Dsdt-Uart.asl")
+    include("Dsdt-Usb.asl")
   } // \_SB_
 }

@@ -27,32 +27,3 @@ Device (I2C1)
   })
 }
 
-Device (I2C2)
-{
-  Name (_HID, "NXP0104")
-  Name (_UID, 0x2)
-
-  Method (_STA) {
-    Return (0xf)
-  }
-
-  Name (_CRS, ResourceTemplate () {
-    MEMORY32FIXED (ReadWrite, 0x021A4000, 0x14, )
-    Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive) { 69 }
-  })
-}
-
-Device (I2C3)
-{
-  Name (_HID, "NXP0104")
-  Name (_UID, 0x3)
-
-  Method (_STA) {
-    Return (0xf)
-  }
-
-  Name (_CRS, ResourceTemplate () {
-    MEMORY32FIXED (ReadWrite, 0x021A8000, 0x14, )
-    Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive) { 70 }
-  })
-}
