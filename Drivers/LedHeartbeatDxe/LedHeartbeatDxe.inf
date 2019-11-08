@@ -30,6 +30,9 @@
 [Protocols]
   gEfiTimerArchProtocolGuid
 
+[Guids]
+  gEfiEventExitBootServicesGuid
+
 [Pcd]
   giMXPlatformTokenSpaceGuid.PcdGpioBankMemoryRange
 

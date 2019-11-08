@@ -19,6 +19,8 @@
 #include <Device/iMX6IoMux.h>
 
 EFI_EVENT m_CallbackTimer = NULL;
+EFI_EVENT m_ExitBootServicesEvent = NULL;
+
 IMX_GPIO_VALUE LastLedValue = IMX_GPIO_HIGH;
 
 VOID EFIAPI LedHeartbeatCallback(
@@ -29,6 +31,17 @@ VOID EFIAPI LedHeartbeatCallback(
     // GPIO1_2: LED_GREEN_N
     LastLedValue = (LastLedValue == IMX_GPIO_LOW) ? IMX_GPIO_HIGH : IMX_GPIO_LOW;
     ImxGpioWrite(IMX_GPIO_BANK1, 2, LastLedValue);
+}
+
+VOID EFIAPI ExitBootServicesCallback(
+    IN EFI_EVENT Event, 
+    IN VOID *Context
+)
+{
+    // Turn on all LEDs
+    ImxGpioWrite(IMX_GPIO_BANK1, 2, IMX_GPIO_LOW);
+    ImxGpioWrite(IMX_GPIO_BANK1, 7, IMX_GPIO_LOW);
+    ImxGpioWrite(IMX_GPIO_BANK1, 9, IMX_GPIO_LOW);
 }
 
 EFI_STATUS
@@ -62,6 +75,17 @@ HeartbeatInitialize(
         EVT_NOTIFY_SIGNAL | EVT_TIMER,
         TPL_CALLBACK, LedHeartbeatCallback, NULL,
         &m_CallbackTimer
+    );
+
+    ASSERT_EFI_ERROR(Status);
+
+    Status = gBS->CreateEventEx(	
+        EVT_NOTIFY_SIGNAL, 
+        TPL_NOTIFY, 
+        ExitBootServicesCallback, 
+        NULL,	
+        &gEfiEventExitBootServicesGuid, 
+        &m_ExitBootServicesEvent
     );
 
     ASSERT_EFI_ERROR(Status);
