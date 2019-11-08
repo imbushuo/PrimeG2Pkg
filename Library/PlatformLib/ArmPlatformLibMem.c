@@ -51,6 +51,8 @@ ArmPlatformGetVirtualMemoryMap (
     return;
   }
 
+  CacheAttributes = DDR_ATTRIBUTES_CACHED;
+
   // SOC registers region
   VirtualMemoryTable[Index].PhysicalBase   = SOC_REGISTERS_PHYSICAL_BASE1;
   VirtualMemoryTable[Index].VirtualBase    = SOC_REGISTERS_PHYSICAL_BASE1;

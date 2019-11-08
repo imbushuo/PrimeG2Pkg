@@ -25,6 +25,14 @@
 
 extern UINT64 mSystemMemoryEnd;
 
+#define SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES                               \
+  EFI_RESOURCE_ATTRIBUTE_PRESENT | EFI_RESOURCE_ATTRIBUTE_INITIALIZED |        \
+      EFI_RESOURCE_ATTRIBUTE_TESTED | EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |     \
+      EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |                               \
+      EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |                         \
+      EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |                            \
+      EFI_RESOURCE_ATTRIBUTE_EXECUTION_PROTECTABLE
+
 VOID
 BuildMemoryTypeInformationHob (
   VOID
@@ -51,25 +59,21 @@ InitMmu (
 
 STATIC
 VOID
-Add(ARM_MEMORY_REGION_DESCRIPTOR *Desc, EFI_MEMORY_TYPE Type)
+Add(ARM_MEMORY_REGION_DESCRIPTOR *Desc, EFI_RESOURCE_TYPE ResType, 
+  EFI_RESOURCE_ATTRIBUTE_TYPE ResAttrib, EFI_MEMORY_TYPE MemType)
 {
   BuildResourceDescriptorHob (
-                              EFI_RESOURCE_SYSTEM_MEMORY,
-                              EFI_RESOURCE_ATTRIBUTE_PRESENT |
-                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_TESTED,
-                              Desc->PhysicalBase,
-                              Desc->Length
-                              );
+    ResType,
+    ResAttrib,
+    Desc->PhysicalBase,
+    Desc->Length
+  );
 
   BuildMemoryAllocationHob (
-                            Desc->PhysicalBase,
-                            Desc->Length,
-                            Type
-                            );
+    Desc->PhysicalBase,
+    Desc->Length,
+    MemType
+  );
 }
 
 STATIC
@@ -134,36 +138,28 @@ MemoryPeim (
   AddAndMmio(&MemoryTable[2]);
 
   // Free memory
-  BuildResourceDescriptorHob (
-                              EFI_RESOURCE_SYSTEM_MEMORY,
-                              EFI_RESOURCE_ATTRIBUTE_PRESENT |
-                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_TESTED,
-                              MemoryTable[3].PhysicalBase,
-                              MemoryTable[3].Length
-                              );
+  Add(&MemoryTable[3], EFI_RESOURCE_SYSTEM_MEMORY,
+    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
+    EfiConventionalMemory
+  );
 
   // Framebuffer
-  Add(&MemoryTable[4], EfiMaxMemoryType);
+  Add(&MemoryTable[4], EFI_RESOURCE_MEMORY_RESERVED,
+    EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE, 
+    EfiMaxMemoryType
+  );
 
   // FD region
-  Add(&MemoryTable[5], EfiBootServicesData);
+  Add(&MemoryTable[5], EFI_RESOURCE_SYSTEM_MEMORY,
+    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
+    EfiBootServicesData
+  );
 
   // Usable memory.
-  BuildResourceDescriptorHob (
-                              EFI_RESOURCE_SYSTEM_MEMORY,
-                              EFI_RESOURCE_ATTRIBUTE_PRESENT |
-                              EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
-                              EFI_RESOURCE_ATTRIBUTE_TESTED,
-                              MemoryTable[6].PhysicalBase,
-                              MemoryTable[6].Length
-                              );
+  Add(&MemoryTable[6], EFI_RESOURCE_SYSTEM_MEMORY,
+    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
+    EfiConventionalMemory
+  );
 
   // Build Memory Allocation Hob
   InitMmu (MemoryTable);
