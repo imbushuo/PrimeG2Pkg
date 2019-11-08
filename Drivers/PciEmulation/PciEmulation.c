@@ -31,6 +31,9 @@
 
 #include <UBoot/ehci-ci.h>
 
+#define SET_HIGH(b, i) ImxGpioDirection((b), (i), IMX_GPIO_DIR_OUTPUT); \
+  ImxGpioWrite((b), (i), IMX_GPIO_HIGH)
+
 // Prebaked pad configurations that include mux and drive settings where
 // each enum named as IMX_<MODULE-NAME>_PADCFG contains configurations
 // for pads used by that module
@@ -122,8 +125,8 @@ PciEmulationEntryPoint (
 	}
 
   /* Do board specific initialization */
-  ImxPadConfig (IMX_PAD_GPIO_0, IMX_PAD_CFG_USB_OTG1_ID);
-  ImxPadConfig (IMX_PAD_GPIO_4, IMX_PAD_CFG_USB_OTG_PWR);
+  /* ImxPadConfig (IMX_PAD_GPIO_0, IMX_PAD_CFG_USB_OTG1_ID);
+  ImxPadConfig (IMX_PAD_GPIO_4, IMX_PAD_CFG_USB_OTG_PWR); */
 
   /* Set Power polarity */
   usbnc_usb_ctrl = MmioRead32((UINTN) FixedPcdGet32(PcdEHCIBase) + USB_OTHERREGS_OFFSET);
@@ -131,7 +134,12 @@ PciEmulationEntryPoint (
 
   /* Configure power and OC */
   ImxUsbPhyInit (IMX_USBPHY0);
-  
+  ImxUsbPhyInit (IMX_USBPHY1);
+
+  /* Turn on VBus */
+  ImxGpioDirection(IMX_GPIO_BANK1, 4, IMX_GPIO_DIR_OUTPUT);
+  ImxGpioWrite(IMX_GPIO_BANK1, 4, IMX_GPIO_HIGH);
+
   return RegisterNonDiscoverableMmioDevice (
            NonDiscoverableDeviceTypeEhci,
            NonDiscoverableDeviceDmaTypeNonCoherent,
