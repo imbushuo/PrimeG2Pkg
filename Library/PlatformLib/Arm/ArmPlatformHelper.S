@@ -15,9 +15,17 @@
 #include <Library/ArmLib.h>
 
 ASM_FUNC(ArmPlatformPeiBootAction)
-  mrc   p15, 0, r0, c1, c0, 0
-  bic   r0, r0, #2
-  mcr   p15, 0, r0, c1, c0, 0 
+  // Disable L2 cache
+  mrc   p15, 0, r0, c1, c0, 1
+  bic   r0, r0, #0x00000002
+  mcr   p15, 0, r0, c1, c0, 1
+  // Disable Strict alignment checking & Enable Instruction cache
+  mrc     p15, 0, r0, c1, c0, 0
+  bic     r0, r0, #0x00002300     /* clear bits 13, 9:8 (--V- --RS) */
+  bic     r0, r0, #0x00000005     /* clear bits 0, 2 (---- -C-M) */
+  bic     r0, r0, #0x00000002     /* Clear bit 1 (Alignment faults) */
+  orr     r0, r0, #0x00001000     /* set bit 12 (I) enable I-Cache */
+  mcr     p15, 0, r0, c1, c0, 0
   bx    lr
 
 //UINTN

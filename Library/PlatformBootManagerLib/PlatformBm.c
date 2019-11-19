@@ -33,7 +33,7 @@
 #include <Guid/EventGroup.h>
 #include <Guid/TtyTerm.h>
 
-#include <Device/KeypadDevice.h>
+// #include <Device/KeypadDevice.h>
 
 #include "PlatformBm.h"
 
@@ -495,8 +495,8 @@ PlatformBootManagerBeforeConsole (
   //
   // Add the hardcoded short-form Prime G2 keypad device path to ConIn.
   //
-  EfiBootManagerUpdateConsoleVariable (ConIn,
-    (EFI_DEVICE_PATH_PROTOCOL *)&gKeyPadDxeDevicePath, NULL);
+  // EfiBootManagerUpdateConsoleVariable (ConIn,
+  //   (EFI_DEVICE_PATH_PROTOCOL *)&gKeyPadDxeDevicePath, NULL);
 
   //
   // Add the hardcoded short-form USB keyboard device path to ConIn.

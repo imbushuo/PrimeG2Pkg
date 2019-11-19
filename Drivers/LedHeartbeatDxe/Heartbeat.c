@@ -64,7 +64,7 @@ HeartbeatInitialize(
     ImxGpioWrite(IMX_GPIO_BANK1, 9, IMX_GPIO_LOW);
 
     // Wait a bit (screen will be unresponsive)
-    MicroSecondDelay(500000);
+    MicroSecondDelay(10000000);
 
     // Turn off all LEDs
     ImxGpioWrite(IMX_GPIO_BANK1, 2, IMX_GPIO_HIGH);

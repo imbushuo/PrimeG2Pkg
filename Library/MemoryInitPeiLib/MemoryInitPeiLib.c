@@ -76,27 +76,6 @@ Add(ARM_MEMORY_REGION_DESCRIPTOR *Desc, EFI_RESOURCE_TYPE ResType,
   );
 }
 
-STATIC
-VOID
-AddAndMmio(ARM_MEMORY_REGION_DESCRIPTOR *Desc)
-{
-  BuildResourceDescriptorHob (
-                              EFI_RESOURCE_SYSTEM_MEMORY,
-                              (EFI_RESOURCE_ATTRIBUTE_PRESENT    |
-                               EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-                               EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-                               EFI_RESOURCE_ATTRIBUTE_TESTED),
-                              Desc->PhysicalBase,
-                              Desc->Length
-                              );
-
-  BuildMemoryAllocationHob (
-                            Desc->PhysicalBase,
-                            Desc->Length,
-                            EfiMemoryMappedIO
-                            );
-}
-
 /*++
 
 Routine Description:
@@ -128,35 +107,38 @@ MemoryPeim (
   // Ensure PcdSystemMemorySize has been set
   ASSERT (PcdGet64 (PcdSystemMemorySize) != 0);
 
-  // SOC registers region
-  AddAndMmio(&MemoryTable[0]);
-  
-  // DMA registers region
-  AddAndMmio(&MemoryTable[1]);
-
-  // GIC-400 registers region
-  AddAndMmio(&MemoryTable[2]);
+  // SOC registers region, DMA registers region and GIC-400 registers region
+  Add(&MemoryTable[0], EFI_RESOURCE_MEMORY_MAPPED_IO,
+    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE, 
+    EfiMemoryMappedIO
+  );
 
   // Free memory
-  Add(&MemoryTable[3], EFI_RESOURCE_SYSTEM_MEMORY,
+  Add(&MemoryTable[1], EFI_RESOURCE_SYSTEM_MEMORY,
     SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
     EfiConventionalMemory
   );
 
+  // MPPark mailbox
+  Add(&MemoryTable[2], EFI_RESOURCE_MEMORY_RESERVED,
+    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE,
+    EfiRuntimeServicesCode
+  );
+
   // Framebuffer
-  Add(&MemoryTable[4], EFI_RESOURCE_MEMORY_RESERVED,
+  Add(&MemoryTable[3], EFI_RESOURCE_MEMORY_RESERVED,
     EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE, 
-    EfiMaxMemoryType
+    EfiReservedMemoryType
   );
 
   // FD region
-  Add(&MemoryTable[5], EFI_RESOURCE_SYSTEM_MEMORY,
+  Add(&MemoryTable[4], EFI_RESOURCE_SYSTEM_MEMORY,
     SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
     EfiBootServicesData
   );
 
   // Usable memory.
-  Add(&MemoryTable[6], EFI_RESOURCE_SYSTEM_MEMORY,
+  Add(&MemoryTable[5], EFI_RESOURCE_SYSTEM_MEMORY,
     SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
     EfiConventionalMemory
   );

@@ -205,7 +205,7 @@ ExitBootServicesEvent (
   IN VOID       *Context
   )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS  Status = EFI_SUCCESS;
 
   DEBUG ((DEBUG_INFO, "Disabling EPIT timer on ExitBootServicesEvent"));
 

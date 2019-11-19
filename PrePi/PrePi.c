@@ -76,6 +76,7 @@ PrePiMain (
   UINTN                         CharCount;
   UINTN                         StacksSize;
   FIRMWARE_SEC_PERFORMANCE      Performance;
+  EFI_PROCESSOR_MAILBOX*        Mailbox;
 
   // If ensure the FD is either part of the System Memory or totally outside of the System Memory (XIP)
   ASSERT (IS_XIP() ||
@@ -85,11 +86,43 @@ PrePiMain (
   // Initialize the architecture specific bits
   ArchInitialize ();
 
+  // There are still a few things to do
+  /* enable cp10 and cp11 */
+	UINT32 val;
+	__asm__ volatile("mrc	p15, 0, %0, c1, c0, 2" : "=r" (val));
+	val |= (3<<22)|(3<<20);
+	__asm__ volatile("mcr	p15, 0, %0, c1, c0, 2" :: "r" (val));
+
+  ArmInstructionSynchronizationBarrier();
+  ArmDataMemoryBarrier();
+
+	/* set enable bit in fpexc */
+	__asm__ volatile("mrc  p10, 7, %0, c8, c0, 0" : "=r" (val));
+	val |= (1<<30);
+	__asm__ volatile("mcr  p10, 7, %0, c8, c0, 0" :: "r" (val));
+
+  /* enable the cycle count register */
+	UINT32 en;
+	__asm__ volatile("mrc	p15, 0, %0, c9, c12, 0" : "=r" (en));
+	en &= ~(1<<3); /* cycle count every cycle */
+	en |= 1; /* enable all performance counters */
+	__asm__ volatile("mcr	p15, 0, %0, c9, c12, 0" :: "r" (en));
+
+	/* enable cycle counter */
+	en = (1<<31);
+	__asm__ volatile("mcr	p15, 0, %0, c9, c12, 1" :: "r" (en));
+
   // Initialize the Serial Port
   SerialPortInitialize ();
   CharCount = AsciiSPrint (Buffer,sizeof (Buffer),"UEFI firmware (version %s built at %a on %a)\n\r",
     (CHAR16*)PcdGetPtr(PcdFirmwareVersionString), __TIME__, __DATE__);
   SerialPortWrite ((UINT8 *) Buffer, CharCount);
+
+  // Initialize MPPark mailbox for BSP core
+  Mailbox = (EFI_PROCESSOR_MAILBOX*) (UINTN) FixedPcdGet32(MpParkMailboxBase);
+  ZeroMem((VOID*) Mailbox, sizeof(EFI_PROCESSOR_MAILBOX));
+  Mailbox->ProcessorId = 0xFFFFFFFF;
+  Mailbox->JumpAddress = 0x00000000;
 
   // Initialize the Debug Agent for Source Level Debugging
   InitializeDebugAgent (DEBUG_AGENT_INIT_POSTMEM_SEC, NULL, NULL);

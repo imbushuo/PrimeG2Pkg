@@ -1,13 +1,14 @@
 # Copyright (c) 2019, Bingxing Wang. All rights reserved.
 [FD.IMX6ULLPRIMEG2_EFI]
-BaseAddress   = 0x80800000|gArmTokenSpaceGuid.PcdFdBaseAddress
-Size          = 0x00100000|gArmTokenSpaceGuid.PcdFdSize
+# The initrd suggests that this place is probably safe for us to load FD
+BaseAddress   = 0x87000000|gArmTokenSpaceGuid.PcdFdBaseAddress
+Size          = 0x000a0000|gArmTokenSpaceGuid.PcdFdSize
 ErasePolarity = 1
 BlockSize     = 0x200
-NumBlocks     = 0x800
+NumBlocks     = 0x500
 
 # 512 bytes of configuration header & 8 bytes of image header
-0x00000000|0x00100000
+0x00000000|0x000a0000
 gArmTokenSpaceGuid.PcdFvBaseAddress|gArmTokenSpaceGuid.PcdFvSize
 FV = FVMAIN_COMPACT
 
@@ -43,7 +44,11 @@ READ_LOCK_STATUS   = TRUE
 
   INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
   INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
+!if $(USE_ARM_GENERIC_TIMER) == 1
+  INF ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+!else
   INF PrimeG2Pkg/Drivers/TimerDxe/TimerDxe.inf
+!endif
 
   INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   INF EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
@@ -52,22 +57,29 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   INF MdeModulePkg/Universal/PrintDxe/PrintDxe.inf
   INF MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  INF PrimeG2Pkg/Drivers/ConSplitterDxe/ConSplitterDxe.inf
-  INF PrimeG2Pkg/Drivers/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   INF MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   INF MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  INF PrimeG2Pkg/Drivers/PlatformSmbiosDxe/PlatformSmbiosDxe.inf
   INF MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
   INF MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   INF MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
   INF MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
   INF MdeModulePkg/Application/UiApp/UiApp.inf
   INF MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+  INF MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+
+!if $(USE_GRAPHICAL_CONSOLE) == 1
+  INF PrimeG2Pkg/Drivers/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  INF PrimeG2Pkg/Drivers/ConSplitterDxe/ConSplitterDxe.inf
+!else
+  INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+!endif
 
   INF MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   INF MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
+
   INF RuleOverride=ACPITABLE PrimeG2Pkg/AcpiTables/AcpiTables.inf
+  INF PrimeG2Pkg/Drivers/PlatformSmbiosDxe/PlatformSmbiosDxe.inf
 
   INF PrimeG2Pkg/Drivers/PciEmulation/PciEmulation.inf
   INF MdeModulePkg/Bus/Pci/NonDiscoverablePciDeviceDxe/NonDiscoverablePciDeviceDxe.inf
@@ -78,7 +90,6 @@ READ_LOCK_STATUS   = TRUE
 
   INF MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   INF MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  INF MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe.inf
   INF MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   INF FatPkg/EnhancedFatDxe/Fat.inf
   INF MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
@@ -93,7 +104,7 @@ READ_LOCK_STATUS   = TRUE
   INF PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   INF PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
   INF PrimeG2Pkg/Drivers/LedHeartbeatDxe/LedHeartbeatDxe.inf
-  INF PrimeG2Pkg/Drivers/GpioKeypadDxe/GpioKeypadDxe.inf
+  # INF PrimeG2Pkg/Drivers/GpioKeypadDxe/GpioKeypadDxe.inf
 
   INF ShellPkg/Application/Shell/Shell.inf
 

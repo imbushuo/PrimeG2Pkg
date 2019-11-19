@@ -53,47 +53,31 @@ ArmPlatformGetVirtualMemoryMap (
 
   CacheAttributes = DDR_ATTRIBUTES_CACHED;
 
-  // SOC registers region
-  VirtualMemoryTable[Index].PhysicalBase   = SOC_REGISTERS_PHYSICAL_BASE1;
-  VirtualMemoryTable[Index].VirtualBase    = SOC_REGISTERS_PHYSICAL_BASE1;
-  VirtualMemoryTable[Index].Length         = SOC_REGISTERS_PHYSICAL_LENGTH1;
-  VirtualMemoryTable[Index].Attributes     = SOC_REGISTERS_ATTRIBUTES;
-
-  // DMA registers region
-  VirtualMemoryTable[++Index].PhysicalBase = APBH_DMA_REGISTERS_PHYSICAL_BASE;
-  VirtualMemoryTable[Index].VirtualBase    = APBH_DMA_REGISTERS_PHYSICAL_BASE;
-  VirtualMemoryTable[Index].Length         = APBH_DMA_REGISTERS_PHYSICAL_LENGTH;
-  VirtualMemoryTable[Index].Attributes     = SOC_REGISTERS_ATTRIBUTES;
-
-  // GIC-400 registers region
-  VirtualMemoryTable[++Index].PhysicalBase = GIC_REGISTERS_PHYSICAL_BASE;
-  VirtualMemoryTable[Index].VirtualBase    = GIC_REGISTERS_PHYSICAL_BASE;
-  VirtualMemoryTable[Index].Length         = GIC_REGISTERS_PHYSICAL_LENGTH;
-  VirtualMemoryTable[Index].Attributes     = SOC_REGISTERS_ATTRIBUTES;
+  // SOC registers region, DMA registers region and GIC-400 registers region
+  // I doubt if it is really a GIC-400 anyway, but it should be something
+  // compliant with GICv2
+  VirtualMemoryTable[Index].PhysicalBase   = 0x00000000;
+  VirtualMemoryTable[Index].VirtualBase    = 0x00000000;
+  VirtualMemoryTable[Index].Length         = 0x80000000;
+  VirtualMemoryTable[Index].Attributes     = ARM_MEMORY_REGION_ATTRIBUTE_DEVICE;
 
   // Free memory
   VirtualMemoryTable[++Index].PhysicalBase = 0x80000000;
   VirtualMemoryTable[Index].VirtualBase    = 0x80000000;
-  VirtualMemoryTable[Index].Length         = 0x600000;
+  VirtualMemoryTable[Index].Length         = 0x0fe00000;
   VirtualMemoryTable[Index].Attributes     = CacheAttributes;
 
-  // Framebuffer
-  VirtualMemoryTable[++Index].PhysicalBase = 0x80600000;
-  VirtualMemoryTable[Index].VirtualBase    = 0x80600000;
-  VirtualMemoryTable[Index].Length         = 0x200000;
+  // MPPark mailbox
+  VirtualMemoryTable[++Index].PhysicalBase = 0x8fe00000;
+  VirtualMemoryTable[Index].VirtualBase    = 0x8fe00000;
+  VirtualMemoryTable[Index].Length         = 0x00100000;
   VirtualMemoryTable[Index].Attributes     = DDR_ATTRIBUTES_UNCACHED;
 
-  // FD region
-  VirtualMemoryTable[++Index].PhysicalBase   = BOOT_IMAGE_PHYSICAL_BASE;
-  VirtualMemoryTable[Index].VirtualBase      = BOOT_IMAGE_PHYSICAL_BASE;
-  VirtualMemoryTable[Index].Length           = BOOT_IMAGE_PHYSICAL_LENGTH;
-  VirtualMemoryTable[Index].Attributes       = BOOT_IMAGE_ATTRIBUTES;
-
-  // DRAM
-  VirtualMemoryTable[++Index].PhysicalBase = BOOT_IMAGE_PHYSICAL_BASE + BOOT_IMAGE_PHYSICAL_LENGTH;
-  VirtualMemoryTable[Index].VirtualBase    = BOOT_IMAGE_PHYSICAL_BASE + BOOT_IMAGE_PHYSICAL_LENGTH;
-  VirtualMemoryTable[Index].Length         = 0xf630000;
-  VirtualMemoryTable[Index].Attributes     = CacheAttributes;
+  // Framebuffer
+  VirtualMemoryTable[++Index].PhysicalBase = 0x8ff00000;
+  VirtualMemoryTable[Index].VirtualBase    = 0x8ff00000;
+  VirtualMemoryTable[Index].Length         = 0x00100000;
+  VirtualMemoryTable[Index].Attributes     = ARM_MEMORY_REGION_ATTRIBUTE_WRITE_THROUGH;
 
   // End of Table
   VirtualMemoryTable[++Index].PhysicalBase = 0;

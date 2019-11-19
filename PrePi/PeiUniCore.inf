@@ -101,6 +101,9 @@
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiLoaderData
 
   gPrimeG2PkgTokenSpaceGuid.PcdLcdIfBaseAddress
+  giMXPlatformTokenSpaceGuid.MpParkMailboxBase
+
+  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz
 
 [Pcd]
   gArmTokenSpaceGuid.PcdSystemMemoryBase

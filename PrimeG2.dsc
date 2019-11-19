@@ -31,10 +31,13 @@
   #
   DEFINE DEBUG_PRINT_ERROR_LEVEL = 0x8000004F
   DEFINE USE_SCREEN_FOR_SERIAL_OUTPUT = 0
+  DEFINE USE_ARM_GENERIC_TIMER = 0
 
 [PcdsFixedAtBuild.common]
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0xef00000
+  gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize|0x4000
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x0fe00000
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x80000000
+  gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x01000000
   gArmPlatformTokenSpaceGuid.PcdCoreCount|1
 !if $(TARGET) == RELEASE
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x21
@@ -62,13 +65,21 @@
   gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile|{ 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
-  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|5
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|3
 
   gArmTokenSpaceGuid.PcdTrustzoneSupport|FALSE
   gArmTokenSpaceGuid.PcdVFPEnabled|1
 
   gEmbeddedTokenSpaceGuid.PcdTimerPeriod|100000
+!if $(USE_ARM_GENERIC_TIMER) == 1
+  gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|8000000
+!else
   gArmTokenSpaceGuid.PcdArmArchTimerFreqInHz|1000000
+!endif
+  gArmTokenSpaceGuid.PcdArmArchTimerVirtIntrNum|27 # Virtual PPI
+  gArmTokenSpaceGuid.PcdArmArchTimerHypIntrNum|26 # Hypervisor PPI
+  gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum|29 # Physical Secure PPI
+  gArmTokenSpaceGuid.PcdArmArchTimerIntrNum|30 # Physical Non-Secure PPI
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L"0.1"
 
@@ -76,6 +87,14 @@
   giMXPlatformTokenSpaceGuid.PcdKdUartInstance|1                # UART1
 
   giMXPlatformTokenSpaceGuid.PcdPhysicalMemoryMaximumCapacity|0x40000
+
+  # More ACPI
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId|"MCMSFT"
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId|0x4e5850494d583620
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision|0x00000001
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId|0x4e585049
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision|0x00000001
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions|0x20
 
 [PcdsFeatureFlag.common]
   gArmTokenSpaceGuid.PcdRelocateVectorTable|FALSE
@@ -109,12 +128,17 @@
   RealTimeClockLib|PrimeG2Pkg/Library/VirtualRealTimeClockLib/VirtualRealTimeClockLib.inf
   DefaultExceptionHandlerLib|ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
   CpuExceptionHandlerLib|ArmPkg/Library/ArmExceptionLib/ArmExceptionLib.inf
+!if $(USE_ARM_GENERIC_TIMER) == 1
+  TimerLib|ArmPkg/Library/ArmArchTimerLib/ArmArchTimerLib.inf
+!else
   TimerLib|PrimeG2Pkg/Library/TimerLib/TimerLib.inf
+!endif
   ArmGenericTimerCounterLib|ArmPkg/Library/ArmGenericTimerPhyCounterLib/ArmGenericTimerPhyCounterLib.inf
 
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
-  MemoryInitPeiLib|PrimeG2Pkg/Library/MemoryInitPeiLib/MemoryInitPeiLib.inf
+  # MemoryInitPeiLib|PrimeG2Pkg/Library/MemoryInitPeiLib/MemoryInitPeiLib.inf
+  MemoryInitPeiLib|ArmPlatformPkg/MemoryInitPei/MemoryInitPeiLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   DmaLib|EmbeddedPkg/Library/NonCoherentDmaLib/NonCoherentDmaLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
@@ -196,7 +220,8 @@
   HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
   LzmaDecompressLib|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   MemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
-  MemoryInitPeiLib|PrimeG2Pkg/Library/MemoryInitPeiLib/MemoryInitPeiLib.inf
+  # MemoryInitPeiLib|PrimeG2Pkg/Library/MemoryInitPeiLib/MemoryInitPeiLib.inf
+  MemoryInitPeiLib|ArmPlatformPkg/MemoryInitPei/MemoryInitPeiLib.inf
   PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   PerformanceLib|MdeModulePkg/Library/PeiPerformanceLib/PeiPerformanceLib.inf
   PlatformPeiLib|ArmPlatformPkg/PlatformPei/PlatformPeiLib.inf
@@ -269,7 +294,11 @@
 
   ArmPkg/Drivers/CpuDxe/CpuDxe.inf
   ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+!if $(USE_ARM_GENERIC_TIMER) == 1
+  ArmPkg/Drivers/TimerDxe/TimerDxe.inf
+!else
   PrimeG2Pkg/Drivers/TimerDxe/TimerDxe.inf
+!endif
 
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
@@ -278,26 +307,32 @@
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   MdeModulePkg/Universal/PrintDxe/PrintDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  PrimeG2Pkg/Drivers/ConSplitterDxe/ConSplitterDxe.inf
-  PrimeG2Pkg/Drivers/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  PrimeG2Pkg/Drivers/PlatformSmbiosDxe/PlatformSmbiosDxe.inf
   MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
   MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
   MdeModulePkg/Application/UiApp/UiApp.inf
   MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+
+!if $(USE_GRAPHICAL_CONSOLE) == 1
+  PrimeG2Pkg/Drivers/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  PrimeG2Pkg/Drivers/ConSplitterDxe/ConSplitterDxe.inf
+!else
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+!endif
 
   MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
+
   PrimeG2Pkg/AcpiTables/AcpiTables.inf
+  PrimeG2Pkg/Drivers/PlatformSmbiosDxe/PlatformSmbiosDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  MdeModulePkg/Universal/Disk/RamDiskDxe/RamDiskDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   FatPkg/EnhancedFatDxe/Fat.inf
   MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
@@ -319,7 +354,7 @@
   PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
   PrimeG2Pkg/Drivers/LedHeartbeatDxe/LedHeartbeatDxe.inf
-  PrimeG2Pkg/Drivers/GpioKeypadDxe/GpioKeypadDxe.inf
+  # PrimeG2Pkg/Drivers/GpioKeypadDxe/GpioKeypadDxe.inf
 
   ShellPkg/Application/Shell/Shell.inf {
     <LibraryClasses>

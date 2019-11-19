@@ -23,14 +23,15 @@
   VERSION_STRING                 = 1.0
 
 [Sources]
-  DSDT.asl
+  Dsdt/DSDT.asl
   Csrt.aslc
   Dbg2.aslc
   Fadt.aslc
-  Madt.aslc
+  Madt.asl
+  Facs.asl
 
 [BuildOptions.ARM]
-  GCC:*_*_*_CC_FLAGS = -Wno-missing-braces
+  GCC:*_*_*_CC_FLAGS = -Wno-missing-braces -DCONFIG_L2CACHE_OFF
 
 [Packages]
   ArmPkg/ArmPkg.dec

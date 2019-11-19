@@ -27,9 +27,23 @@
 #include <Library/SerialPortLib.h>
 #include <Library/ArmPlatformLib.h>
 
+#include <Device/common_gpt.h>
+#include <Device/imx6_ull.h>
+#include <Library/iMX6Timer.h>
+
 #define SerialPrint(txt)  SerialPortWrite (txt, AsciiStrLen(txt)+1);
 
 extern UINT64 mSystemMemoryEnd;
+
+#pragma pack(1)
+
+typedef struct {
+  UINT32 ProcessorId;
+  UINT32 Reserved;
+  UINT64 JumpAddress;
+} EFI_PROCESSOR_MAILBOX;
+
+#pragma pack()
 
 RETURN_STATUS
 EFIAPI
