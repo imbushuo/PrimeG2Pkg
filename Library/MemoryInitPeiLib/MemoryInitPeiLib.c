@@ -113,34 +113,44 @@ MemoryPeim (
     EfiMemoryMappedIO
   );
 
+  Add(&MemoryTable[1], EFI_RESOURCE_MEMORY_MAPPED_IO,
+    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE, 
+    EfiMemoryMappedIO
+  );
+
+  Add(&MemoryTable[2], EFI_RESOURCE_MEMORY_MAPPED_IO,
+    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE, 
+    EfiMemoryMappedIO
+  );
+
   // Free memory
-  Add(&MemoryTable[1], EFI_RESOURCE_SYSTEM_MEMORY,
+  Add(&MemoryTable[3], EFI_RESOURCE_SYSTEM_MEMORY,
+    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
+    EfiConventionalMemory
+  );
+
+  // FD
+  Add(&MemoryTable[4], EFI_RESOURCE_SYSTEM_MEMORY,
+    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
+    EfiBootServicesCode
+  );
+
+  // Free memory
+  Add(&MemoryTable[5], EFI_RESOURCE_SYSTEM_MEMORY,
     SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
     EfiConventionalMemory
   );
 
   // MPPark mailbox
-  Add(&MemoryTable[2], EFI_RESOURCE_MEMORY_RESERVED,
+  Add(&MemoryTable[6], EFI_RESOURCE_MEMORY_RESERVED,
     EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE,
     EfiRuntimeServicesCode
   );
 
   // Framebuffer
-  Add(&MemoryTable[3], EFI_RESOURCE_MEMORY_RESERVED,
+  Add(&MemoryTable[7], EFI_RESOURCE_MEMORY_RESERVED,
     EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE, 
     EfiReservedMemoryType
-  );
-
-  // FD region
-  Add(&MemoryTable[4], EFI_RESOURCE_SYSTEM_MEMORY,
-    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
-    EfiBootServicesData
-  );
-
-  // Usable memory.
-  Add(&MemoryTable[5], EFI_RESOURCE_SYSTEM_MEMORY,
-    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
-    EfiConventionalMemory
   );
 
   // Build Memory Allocation Hob

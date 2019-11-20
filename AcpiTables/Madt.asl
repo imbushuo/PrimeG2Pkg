@@ -23,7 +23,7 @@
           Virtual GIC Interrupt Trigger Mode : 0
 [03Ch 0060   4]     Parking Protocol Version : 00000001
 [040h 0064   4]        Performance Interrupt : 0000007e
-[044h 0068   8]               Parked Address : 000000008fe00000
+[044h 0068   8]               Parked Address : 0000000080100000
 [04Ch 0076   8]                 Base Address : 0000000000a02000
 [054h 0084   8]     Virtual GIC Base Address : 0000000000000000
 [05Ch 0092   8]  Hypervisor GIC Base Address : 0000000000000000

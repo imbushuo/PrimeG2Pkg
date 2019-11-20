@@ -1,14 +1,14 @@
 # Copyright (c) 2019, Bingxing Wang. All rights reserved.
 [FD.IMX6ULLPRIMEG2_EFI]
 # The initrd suggests that this place is probably safe for us to load FD
-BaseAddress   = 0x87000000|gArmTokenSpaceGuid.PcdFdBaseAddress
-Size          = 0x000b0000|gArmTokenSpaceGuid.PcdFdSize
+BaseAddress   = 0x80200000|gArmTokenSpaceGuid.PcdFdBaseAddress
+Size          = 0x00100000|gArmTokenSpaceGuid.PcdFdSize
 ErasePolarity = 1
 BlockSize     = 0x200
-NumBlocks     = 0x580
+NumBlocks     = 0x800
 
 # 512 bytes of configuration header & 8 bytes of image header
-0x00000000|0x000b0000
+0x00000000|0x00100000
 gArmTokenSpaceGuid.PcdFvBaseAddress|gArmTokenSpaceGuid.PcdFvSize
 FV = FVMAIN_COMPACT
 
@@ -98,8 +98,13 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   INF MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   INF MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
-  INF MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
   INF EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
+
+!if $(UDK2019) == 1
+  INF MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
+!else
+  INF MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+!endif
 
   INF PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   INF PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf
@@ -126,7 +131,7 @@ READ_STATUS        = TRUE
 READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
-  INF ArmPlatformPkg/PrePi/PeiUniCore.inf
+  INF PrimeG2Pkg/PrePi/PeiUniCore.inf
 
   FILE FV_IMAGE = f0638b57-e970-4b5d-af05-a67154d44c94 {
     SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {

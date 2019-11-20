@@ -43,7 +43,7 @@
   giMXPlatformTokenSpaceGuid.PcdPhysicalMemoryMaximumCapacity|0x0|UINT32|0x4B
 
   # MPPark
-  giMXPlatformTokenSpaceGuid.MpParkMailboxBase|0x8fe00000|UINT32|0xe0000001
+  giMXPlatformTokenSpaceGuid.MpParkMailboxBase|0x80200000|UINT32|0xe0000001
 
 [PcdsFeatureFlag.common]
   gPrimeG2PkgTokenSpaceGuid.PcdLvdsEnable|FALSE|BOOLEAN|0x00001001

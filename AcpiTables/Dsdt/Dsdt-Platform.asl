@@ -49,7 +49,7 @@ Device (EPIT)
 }
 
 // Platform Extension Plugin
-Device (PEP0)
+/*Device (PEP0)
 {
   Name (_HID, "NXP0102")
   Name (_UID, 0x0)
@@ -70,4 +70,4 @@ Device (PEP0)
     // UART1
     Interrupt (ResourceConsumer, Level, ActiveHigh, Shared) { 58 }
   })
-}
+}*/

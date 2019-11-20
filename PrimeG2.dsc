@@ -35,8 +35,8 @@
 
 [PcdsFixedAtBuild.common]
   gArmPlatformTokenSpaceGuid.PcdCPUCorePrimaryStackSize|0x4000
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x0fe00000
-  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x80000000
+  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x80200000
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x0fc00000
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x01000000
   gArmPlatformTokenSpaceGuid.PcdCoreCount|1
 !if $(TARGET) == RELEASE
@@ -47,6 +47,8 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|$(DEBUG_PRINT_ERROR_LEVEL)
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x07
 
+  giMXPlatformTokenSpaceGuid.MpParkMailboxBase|0x80100000
+
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiACPIReclaimMemory|0
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiACPIMemoryNVS|0
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiReservedMemoryType|0
@@ -56,6 +58,8 @@
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiBootServicesData|800
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiLoaderCode|10
   gEmbeddedTokenSpaceGuid.PcdMemoryTypeEfiLoaderData|0
+
+  gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0
 
   gEmbeddedTokenSpaceGuid.PcdInterruptBaseAddress|0x00a01000
   gArmTokenSpaceGuid.PcdGicDistributorBase|0x00a01000
@@ -97,7 +101,9 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions|0x20
 
   # Variable Services
+!if $(UDK2019) == 1
   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvModeEnable|TRUE
+!endif
 
 [PcdsFeatureFlag.common]
   gArmTokenSpaceGuid.PcdRelocateVectorTable|FALSE
@@ -153,7 +159,11 @@
 
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
-  NetLib|NetworkPkg/Library/DxeNetLib/DxeNetLib.inf
+!if $(UDK2019) == 1
+  NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
+!else
+  NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
+!endif
 
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
@@ -285,7 +295,7 @@
   PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
 
 [Components.common]
-  ArmPlatformPkg/PrePi/PeiUniCore.inf
+  PrimeG2Pkg/PrePi/PeiUniCore.inf
 
   MdeModulePkg/Core/Dxe/DxeMain.inf {
     <LibraryClasses>
@@ -352,8 +362,13 @@
   MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
-  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
   EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
+
+!if $(UDK2019) == 1
+  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
+!else
+  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+!endif
 
   PrimeG2Pkg/Drivers/LcdFbDxe/LcdFbDxe.inf
   PrimeG2Pkg/Drivers/LogoDxe/LogoDxe.inf

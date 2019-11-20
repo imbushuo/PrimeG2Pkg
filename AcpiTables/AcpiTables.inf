@@ -29,6 +29,7 @@
   Fadt.aslc
   Madt.asl
   Facs.asl
+  Gtdt.aslc
 
 [BuildOptions.ARM]
   GCC:*_*_*_CC_FLAGS = -Wno-missing-braces -DCONFIG_L2CACHE_OFF
@@ -46,3 +47,8 @@
   gArmTokenSpaceGuid.PcdGicDistributorBase
   gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase
   giMXPlatformTokenSpaceGuid.PcdKdUartInstance
+
+  gArmTokenSpaceGuid.PcdArmArchTimerVirtIntrNum
+  gArmTokenSpaceGuid.PcdArmArchTimerHypIntrNum
+  gArmTokenSpaceGuid.PcdArmArchTimerSecIntrNum
+  gArmTokenSpaceGuid.PcdArmArchTimerIntrNum
