@@ -2,7 +2,6 @@
 *
 *  Copyright (c) 2011-2015, ARM Limited. All rights reserved.
 *  Copyright (c), 2017-2018, Andrey Warkentin <andrey.warkentin@gmail.com>
-*  Copyright (c), 2019, Bingxing Wang <uefi-oss-projects@svc.nextplay.imbushuo.net>
 *
 *  This program and the accompanying materials
 *  are licensed and made available under the terms and conditions of the BSD License
@@ -23,57 +22,54 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 
+// See memory map here.
+#include <Device/MemoryMap.h>
+
 extern UINT64 mSystemMemoryEnd;
 
-#define SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES                               \
-  EFI_RESOURCE_ATTRIBUTE_PRESENT | EFI_RESOURCE_ATTRIBUTE_INITIALIZED |        \
-      EFI_RESOURCE_ATTRIBUTE_TESTED | EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |     \
-      EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |                               \
-      EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |                         \
-      EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |                            \
-      EFI_RESOURCE_ATTRIBUTE_EXECUTION_PROTECTABLE
-
 VOID
-BuildMemoryTypeInformationHob (
-  VOID
-  );
+BuildMemoryTypeInformationHob(
+	VOID
+);
 
 STATIC
 VOID
-InitMmu (
-  IN ARM_MEMORY_REGION_DESCRIPTOR  *MemoryTable
-  )
+InitMmu(
+	IN ARM_MEMORY_REGION_DESCRIPTOR  *MemoryTable
+)
 {
 
-  VOID                          *TranslationTableBase;
-  UINTN                         TranslationTableSize;
-  RETURN_STATUS                 Status;
+	VOID                          *TranslationTableBase;
+	UINTN                         TranslationTableSize;
+	RETURN_STATUS                 Status;
 
-  //Note: Because we called PeiServicesInstallPeiMemory() before to call InitMmu() the MMU Page Table resides in
-  //      DRAM (even at the top of DRAM as it is the first permanent memory allocation)
-  Status = ArmConfigureMmu (MemoryTable, &TranslationTableBase, &TranslationTableSize);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Error: Failed to enable MMU\n"));
-  }
+	//Note: Because we called PeiServicesInstallPeiMemory() before to call InitMmu() the MMU Page Table resides in
+	//      DRAM (even at the top of DRAM as it is the first permanent memory allocation)
+	Status = ArmConfigureMmu(MemoryTable, &TranslationTableBase, &TranslationTableSize);
+	if (EFI_ERROR(Status)) {
+		DEBUG((EFI_D_ERROR, "Error: Failed to enable MMU\n"));
+	}
 }
 
 STATIC
 VOID
-Add(ARM_MEMORY_REGION_DESCRIPTOR *Desc, EFI_RESOURCE_TYPE ResType, 
-  EFI_RESOURCE_ATTRIBUTE_TYPE ResAttrib, EFI_MEMORY_TYPE MemType)
+AddHob
+(
+	PARM_MEMORY_REGION_DESCRIPTOR_EX Desc
+)
 {
-  BuildResourceDescriptorHob (
-    ResType,
-    ResAttrib,
-    Desc->PhysicalBase,
-    Desc->Length
-  );
+	BuildResourceDescriptorHob(
+		Desc->ResourceType,
+		Desc->ResourceAttribute,
+		Desc->Address,
+		Desc->Length
+	);
 
-  BuildMemoryAllocationHob (
-    Desc->PhysicalBase,
-    Desc->Length,
-    MemType
-  );
+	BuildMemoryAllocationHob(
+		Desc->Address,
+		Desc->Length,
+		Desc->MemoryType
+	);
 }
 
 /*++
@@ -94,72 +90,59 @@ Returns:
 --*/
 EFI_STATUS
 EFIAPI
-MemoryPeim (
-  IN EFI_PHYSICAL_ADDRESS               UefiMemoryBase,
-  IN UINT64                             UefiMemorySize
-  )
+MemoryPeim(
+	IN EFI_PHYSICAL_ADDRESS               UefiMemoryBase,
+	IN UINT64                             UefiMemorySize
+)
 {
-  ARM_MEMORY_REGION_DESCRIPTOR *MemoryTable;
+	PARM_MEMORY_REGION_DESCRIPTOR_EX MemoryDescriptorEx = gDeviceMemoryDescriptorEx;
+	ARM_MEMORY_REGION_DESCRIPTOR MemoryDescriptor[MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT];
+	UINTN Index = 0;
 
-  // Get Virtual Memory Map from the Platform Library
-  ArmPlatformGetVirtualMemoryMap (&MemoryTable);
+	// Ensure PcdSystemMemorySize has been set
+	ASSERT(PcdGet64(PcdSystemMemorySize) != 0);
 
-  // Ensure PcdSystemMemorySize has been set
-  ASSERT (PcdGet64 (PcdSystemMemorySize) != 0);
+	// Run through each memory descriptor
+	while (MemoryDescriptorEx->Length != 0)
+	{
+		switch (MemoryDescriptorEx->HobOption)
+		{
+		case AddMem:
+		case AddDev:
+			AddHob(MemoryDescriptorEx);
+			break;
+		case NoHob:
+		default:
+			goto update;
+		}
 
-  // SOC registers region, DMA registers region and GIC-400 registers region
-  Add(&MemoryTable[0], EFI_RESOURCE_MEMORY_MAPPED_IO,
-    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE, 
-    EfiMemoryMappedIO
-  );
+	update:
+		ASSERT(Index < MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT);
 
-  Add(&MemoryTable[1], EFI_RESOURCE_MEMORY_MAPPED_IO,
-    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE, 
-    EfiMemoryMappedIO
-  );
+		MemoryDescriptor[Index].PhysicalBase = MemoryDescriptorEx->Address;
+		MemoryDescriptor[Index].VirtualBase = MemoryDescriptorEx->Address;
+		MemoryDescriptor[Index].Length = MemoryDescriptorEx->Length;
+		MemoryDescriptor[Index].Attributes = MemoryDescriptorEx->ArmAttributes;
 
-  Add(&MemoryTable[2], EFI_RESOURCE_MEMORY_MAPPED_IO,
-    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE, 
-    EfiMemoryMappedIO
-  );
+		Index++;
+		MemoryDescriptorEx++;
+	}
 
-  // Free memory
-  Add(&MemoryTable[3], EFI_RESOURCE_SYSTEM_MEMORY,
-    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
-    EfiConventionalMemory
-  );
+	// Last one (terminator)
+	ASSERT(Index < MAX_ARM_MEMORY_REGION_DESCRIPTOR_COUNT);
+	MemoryDescriptor[Index].PhysicalBase = 0;
+	MemoryDescriptor[Index].VirtualBase = 0;
+	MemoryDescriptor[Index].Length = 0;
+	MemoryDescriptor[Index].Attributes = 0;
 
-  // FD
-  Add(&MemoryTable[4], EFI_RESOURCE_SYSTEM_MEMORY,
-    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
-    EfiBootServicesCode
-  );
+	// Build Memory Allocation Hob
+	InitMmu(MemoryDescriptor);
 
-  // Free memory
-  Add(&MemoryTable[5], EFI_RESOURCE_SYSTEM_MEMORY,
-    SYSTEM_MEMORY_RESOURCE_ATTR_CAPABILITIES, 
-    EfiConventionalMemory
-  );
+	if (FeaturePcdGet(PcdPrePiProduceMemoryTypeInformationHob))
+	{
+		// Optional feature that helps prevent EFI memory map fragmentation.
+		BuildMemoryTypeInformationHob();
+	}
 
-  // MPPark mailbox
-  Add(&MemoryTable[6], EFI_RESOURCE_MEMORY_RESERVED,
-    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE,
-    EfiRuntimeServicesCode
-  );
-
-  // Framebuffer
-  Add(&MemoryTable[7], EFI_RESOURCE_MEMORY_RESERVED,
-    EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE, 
-    EfiReservedMemoryType
-  );
-
-  // Build Memory Allocation Hob
-  InitMmu (MemoryTable);
-
-  if (FeaturePcdGet (PcdPrePiProduceMemoryTypeInformationHob)) {
-    // Optional feature that helps prevent EFI memory map fragmentation.
-    BuildMemoryTypeInformationHob ();
-  }
-
-  return EFI_SUCCESS;
+	return EFI_SUCCESS;
 }

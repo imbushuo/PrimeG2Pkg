@@ -38,6 +38,9 @@ ArmPlatformGetVirtualMemoryMap (
   IN ARM_MEMORY_REGION_DESCRIPTOR** VirtualMemoryMap
   )
 {
+  // You are not expected to call this
+	ASSERT(FALSE);
+
   ARM_MEMORY_REGION_ATTRIBUTES  CacheAttributes;
   UINTN                         Index = 0;
   ARM_MEMORY_REGION_DESCRIPTOR  *VirtualMemoryTable;
