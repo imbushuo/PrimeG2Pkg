@@ -23,7 +23,7 @@
 // Platform specific definition
 //
 #define EFI_ACPI_OEM_TABLE_ID                   SIGNATURE_64('I','M','X','6','E','D','K','2') // OEM table id 8 bytes long
-#define EFI_ACPI_OEM_REVISION                   0x01000101
+#define EFI_ACPI_OEM_REVISION                   0x01000105
 #define EFI_ACPI_CREATOR_ID                     SIGNATURE_32('I','M','X','6')
 #define EFI_ACPI_CREATOR_REVISION               0x00000001
 

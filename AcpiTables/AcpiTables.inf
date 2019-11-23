@@ -32,7 +32,7 @@
   Gtdt.aslc
 
 [BuildOptions.ARM]
-  GCC:*_*_*_CC_FLAGS = -Wno-missing-braces -DCONFIG_L2CACHE_OFF
+  GCC:*_*_*_CC_FLAGS = -Wno-missing-braces
 
 [Packages]
   ArmPkg/ArmPkg.dec

@@ -60,21 +60,10 @@ typedef struct {
   RD_TIMER ClockTimer;
 } RG_TIMER;
 
-// PL310 L2 Cache Controller Resource Group
-#define CSRT_PL310_MINIMUM_VERSION   1
-#define CSRT_PL310_VERSION_2         2
-#define CSRT_PL310_RAW_PROTOCOL      0
-#define CSRT_PL310_SMC_PROTOCOL      1
-
 #define SMC_CALL_VAL(owner, funcid) \
     (0x80000000 | (((owner) & 0x3F) << 24) | ((funcid) & 0xffff))
 
 #define SMC_OWNER_SIP                   2
-#define IMX_SMC_PL310_ENABLE            SMC_CALL_VAL(SMC_OWNER_SIP, 1)
-#define IMX_SMC_PL310_DISABLE           SMC_CALL_VAL(SMC_OWNER_SIP, 2)
-#define IMX_SMC_PL310_ENABLE_WRITEBACK  SMC_CALL_VAL(SMC_OWNER_SIP, 3)
-#define IMX_SMC_PL310_DISABLE_WRITEBACK SMC_CALL_VAL(SMC_OWNER_SIP, 4)
-#define IMX_SMC_PL310_ENABLE_WFLZ       SMC_CALL_VAL(SMC_OWNER_SIP, 5)
 
 
 typedef struct {
@@ -98,12 +87,6 @@ typedef struct {
   CSRT_SMC_INVOCATION_BLOCK InvokeDisableWriteback;
   CSRT_SMC_INVOCATION_BLOCK InvokeEnableWFLZ;
 } RD_L2_CACHE;
-
-// PL310 L2 cache controller descriptor
-typedef struct {
-  EFI_ACPI_5_0_CSRT_RESOURCE_GROUP_HEADER Header;
-  RD_L2_CACHE L2Cache;
-} RG_L2_CACHE;
 
 // SmartDMA (SDMA) Controller Resource Group
 enum IMX_SDMA_CORE_CLOCK_RATIO {
@@ -132,9 +115,6 @@ typedef struct {
 typedef struct {
   EFI_ACPI_DESCRIPTION_HEADER CsrtHeader; // Standard ACPI Header
   RG_TIMER TimerResourceGroup;            // Timer Resource Group
-#ifndef CONFIG_L2CACHE_OFF
-  RG_L2_CACHE L2CacheResourceGroup;       // PL310 L2 Cache Resource Group
-#endif
   RG_SDMA SdmaResourceGroup;              // SDMA Resource Group
 } EFI_ACPI_CSRT_TABLE;
 
@@ -146,9 +126,6 @@ STATIC EFI_ACPI_CSRT_TABLE Csrt = {
     EFI_ACPI_5_0_CORE_SYSTEM_RESOURCE_TABLE_SIGNATURE,  // Signature "CSRT"
     sizeof (EFI_ACPI_DESCRIPTION_HEADER) +              // Length
     sizeof (RG_TIMER)
-#ifndef CONFIG_L2CACHE_OFF
-    + sizeof (RG_L2_CACHE)
-#endif
     + sizeof (RG_SDMA),
     EFI_ACPI_5_0_CSRT_REVISION,                         // Revision
     0x00,                                               // Checksum calculated at runtime.
@@ -205,85 +182,6 @@ STATIC EFI_ACPI_CSRT_TABLE Csrt = {
       IRQ_EPIT1,                          // Interrupt
     },
   },
-
-#ifndef CONFIG_L2CACHE_OFF
-  // L2CacheResourceGroup
-  {
-    // L2 cache group header
-    {
-      sizeof (RG_L2_CACHE),           // Resource Group Length
-      SIGNATURE_32 ('A', 'R', 'M', 'H'), // VendorId
-      SIGNATURE_32 ('A', 'R', 'M', 'H'), // SubvendorId
-      0x0310,                         // DeviceId
-      0,                              // SubdeviceId
-      0,                              // Revision
-      0,                              // Reserved
-      0                               // No shared info
-    },
-
-    // PL310 L2 cache controller
-    {
-      {
-        sizeof (RD_L2_CACHE),           // Resource Descriptor Length
-        EFI_ACPI_CSRT_RD_TYPE_CACHE,    // Resource Type
-        EFI_ACPI_CSRT_RD_SUBTYPE_CACHE, // Resource Subtype
-        0,                              // UID
-      },
-      CSRT_PL310_VERSION_2,               // Version
-      CSRT_PL310_SMC_PROTOCOL,            // Management Protocol
-      CSP_BASE_REG_PA_PL310,              // 64 bit Physical address
-      // InvokeEnable
-      {
-        0,                                  // Immediate
-        IMX_SMC_PL310_ENABLE,               // R0
-        0,                                  // R1
-        0,                                  // R2
-        0,                                  // R3
-        0,                                  // R12
-      },
-
-      // InvokeDisable
-      {
-        0,                                  // Immediate
-        IMX_SMC_PL310_DISABLE,              // R0
-        0,                                  // R1
-        0,                                  // R2
-        0,                                  // R3
-        0,                                  // R12
-      },
-
-      // InvokeEnableWriteback
-      {
-        0,                                  // Immediate
-        IMX_SMC_PL310_ENABLE_WRITEBACK,     // R0
-        0,                                  // R1
-        0,                                  // R2
-        0,                                  // R3
-        0,                                  // R12
-      },
-
-      // InvokeDisableWriteback
-      {
-        0,                                  // Immediate
-        IMX_SMC_PL310_DISABLE_WRITEBACK,    // R0
-        0,                                  // R1
-        0,                                  // R2
-        0,                                  // R3
-        0,                                  // R12
-      },
-
-      // InvokeEnableWFLZ
-      {
-        0,                                  // Immediate
-        IMX_SMC_PL310_ENABLE_WFLZ,          // R0
-        0,                                  // R1
-        0,                                  // R2
-        0,                                  // R3
-        0,                                  // R12
-      },
-    },
-  },
-#endif
 
   // SdmaResourceGroup
   {
