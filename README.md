@@ -8,7 +8,7 @@ I will write a better README later.
 
 ## Current Status
 
-Capable of booting Windows and Linux. USB Host is function but external VBus supply is required currently.
+Capable of booting Windows and Linux. USB Host is functional but external VBus supply is required currently.
 
 ## Boot
 
