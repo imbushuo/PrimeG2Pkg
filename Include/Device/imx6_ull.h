@@ -19,6 +19,9 @@
 
 #include <Uefi.h>
 
+// Some helper
+#define ROUND_TO_PAGE(x) (x & (~(EFI_PAGE_SIZE - 1)))
+
 #pragma pack(push, 1)
 
 // DDR attributes
@@ -119,6 +122,18 @@
 // Watchdog control
 #define IMX_WDOG1_WCR 0x020bc000
 #define IMX_WDOG2_WCR 0x020c0000
+#define WDT_WCR		0x00
+
+#define BIT(n) (1U << (n))
+#define WDT_WCR_WDA	BIT(5)
+#define WDT_WCR_SRS	BIT(4)
+#define WDT_WCR_WRE	BIT(3)
+#define WDT_WCR_WDE	BIT(2)
+#define WDT_WCR_WDZST	BIT(0)
+
+#define WDT_WSR		0x02
+#define WDT_SEQ1	0x5555
+#define WDT_SEQ2	0xAAAA
 
 // IOMUXC Registers
 #define IOMUXC_SW_MUX_CTL_PAD_KEY_COL0      0x020E01F8

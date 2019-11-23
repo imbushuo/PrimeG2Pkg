@@ -37,8 +37,10 @@
   gEfiEventVirtualAddressChangeGuid
 
 [LibraryClasses]
+  ArmLib
   DebugLib
   BaseLib
   IoLib
   UefiBootServicesTableLib
   UefiRuntimeServicesTableLib
+  DxeServicesTableLib
